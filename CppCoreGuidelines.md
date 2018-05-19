@@ -564,97 +564,99 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rconc-volatile"></a>CP.8: 同期のために volatile を使わないように
 
-### <a name="Rconc-tools"></a>CP.9: Whenever feasible use tools to validate your concurrent code
+### <a name="Rconc-tools"></a>CP.9: 可能な時は必ず、ツールを使ってあなたの並列コードを検証しよう
 
-### <a name="Rconc-raii"></a>CP.20: Use RAII, never plain lock()/unlock()
+### <a name="Rconc-raii"></a>CP.20: 単純な lock()/unlock() は決して使わず、 RAII を使おう
 
-### <a name="Rconc-lock"></a>CP.21: Use std::lock() or std::scoped_lock to acquire multiple mutexes
+### <a name="Rconc-lock"></a>CP.21: 複数の mutexe を取る時は、std::lock() あるいは std::scoped_lock を使おう
 
-### <a name="Rconc-unknown"></a>CP.22: Never call unknown code while holding a lock (e.g., a callback)
+### <a name="Rconc-unknown"></a>CP.22: ロックを持っている時は、未知のコード（例えば、コールバック）を決して呼ばないように
 
-### <a name="Rconc-join"></a>CP.23: Think of a joining thread as a scoped container
+### <a name="Rconc-join"></a>CP.23: join するスレッドは、スコープ内のコンテナとみなそう
 
-### <a name="Rconc-detach"></a>CP.24: Think of a thread as a global container
+### <a name="Rconc-detach"></a>CP.24: デタッチしたスレッドは、グローバルなコンテナとみなそう
+訳注。デタッチした　は原文にないが、あったほうがいい。
 
-### <a name="Rconc-joining_thread"></a>CP.25: Prefer gsl::joining_thread over std::thread
+### <a name="Rconc-joining_thread"></a>CP.25: std::thread より gsl::joining_thread を選ぼう
 
-### <a name="Rconc-detached_thread"></a>CP.26: Don't detach() a thread
+### <a name="Rconc-detached_thread"></a>CP.26: スレッドを detach() しないように
 
-### <a name="Rconc-data-by-value"></a>CP.31: Pass small amounts of data between threads by value, rather than by reference or pointer
+### <a name="Rconc-data-by-value"></a>CP.31: スレッドに渡す少量のデータは、参照あるいはポインタでなく、値で渡そう
 
-### <a name="Rconc-shared"></a>CP.32: To share ownership between unrelated threads use shared_ptr
+### <a name="Rconc-shared"></a>CP.32: 無関係なスレッド間で所有権を共有するには、 shared_ptr を使おう
 
-### <a name="Rconc-switch"></a>CP.40: Minimize context switching
+### <a name="Rconc-switch"></a>CP.40: コンテキストスイッチを最小にしよう
 
-### <a name="Rconc-create"></a>CP.41: Minimize thread creation and destruction
+### <a name="Rconc-create"></a>CP.41: スレッド作成と破壊を最小にしよう
 
-### <a name="Rconc-wait"></a>CP.42: Don't wait without a condition
+### <a name="Rconc-wait"></a>CP.42: 条件無しで wait しないように
 
-### <a name="Rconc-time"></a>CP.43: Minimize time spent in a critical section
+### <a name="Rconc-time"></a>CP.43: クリティカルセクション内で使う時間は最小にしよう
 
-### <a name="Rconc-name"></a>CP.44: Remember to name your lock_guards and unique_locks
+### <a name="Rconc-name"></a>CP.44: lock_guard と unique_lock には名前をつけるのを忘れないように
 
-### <a name="Rconc-mutex"></a>CP.50: Define a mutex together with the data it guards. Use synchronized_value<T> where possible
+### <a name="Rconc-mutex"></a>CP.50: mutex はそれが守るデータと一緒に定義しよう。可能なら、 synchronized_value<T> を使おう
 
-### <a name="Rconc-future"></a>CP.60: Use a future to return a value from a concurrent task
+### <a name="Rconc-future"></a>CP.60: 並列タスクから値を返すには、 future を使おう
 
-### <a name="Rconc-async"></a>CP.61: Use a async() to spawn a concurrent task
+### <a name="Rconc-async"></a>CP.61: 並列タスクを起動するには、 async() を使おう
 
-### <a name="Rconc-lockfree"></a>CP.100: Don't use lock-free programming unless you absolutely have to
+### <a name="Rconc-lockfree"></a>CP.100: 絶対に必要でない限り、ロックフリープログラミングを使わないように
 
-### <a name="Rconc-distrust"></a>CP.101: Distrust your hardware/compiler combination
+### <a name="Rconc-distrust"></a>CP.101: あなたのハードウェアとコンパイラの組み合わせを疑おう
 
-### <a name="Rconc-literature"></a>CP.102: Carefully study the literature
+### <a name="Rconc-literature"></a>CP.102: 注意深く論文を勉強しよう
 
-### <a name="Rconc-double"></a>CP.110: Do not write your own double-checked locking for initialization
+### <a name="Rconc-double"></a>CP.110: 初期化のために、ダブルチェックするロックを自分で書かないように
 
-### <a name="Rconc-double-pattern"></a>CP.111: Use a conventional pattern if you really need double-checked locking
+### <a name="Rconc-double-pattern"></a>CP.111: 本当にダブルチェックするロックが必要な時は、慣用的なパターンを使おう
 
-### <a name="Rconc-volatile2"></a>CP.200: Use volatile only to talk to non-C++ memory
+### <a name="Rconc-volatile2"></a>CP.200: volatile を使うのは、C++ でないメモリと話す時だけにしよう
 
-### <a name="Rconc-signal"></a>CP.201: ??? Signals
+### <a name="Rconc-signal"></a>CP.201: ??? シグナル
 
-### <a name="Re-design"></a>E.1: Develop an error-handling strategy early in a design
+### <a name="Re-design"></a>E.1: 設計の初期に、エラー処理戦略を決めよう
 
-### <a name="Re-throw"></a>E.2: Throw an exception to signal that a function can't perform its assigned task
+### <a name="Re-throw"></a>E.2: 関数が与えられた仕事を実行できないことを示すためには例外を投げよう
 
-### <a name="Re-errors"></a>E.3: Use exceptions for error handling only
+### <a name="Re-errors"></a>E.3: 例外はエラー処理にだけ使おう
 
-### <a name="Re-design-invariants"></a>E.4: Design your error-handling strategy around invariants
+### <a name="Re-design-invariants"></a>E.4: 不変条件に関して、あなたのエラー処理戦略を設計しよう
 
-### <a name="Re-invariant"></a>E.5: Let a constructor establish an invariant, and throw if it cannot
+### <a name="Re-invariant"></a>E.5: コンストラクタに不変条件を確立させよう。それができない時は例外を投げさせよう
 
-### <a name="Re-raii"></a>E.6: Use RAII to prevent leaks
+### <a name="Re-raii"></a>E.6: リークを防ぐために RAII を使おう
 
-### <a name="Re-precondition"></a>E.7: State your preconditions
+### <a name="Re-precondition"></a>E.7: 事前条件を述べよう
 
-### <a name="Re-postcondition"></a>E.8: State your postconditions
+### <a name="Re-postcondition"></a>E.8: 事後条件を述べよう
 
-### <a name="Re-noexcept"></a>E.12: Use noexcept when exiting a function because of a throw is impossible or unacceptable
+### <a name="Re-noexcept"></a>E.12: 例外を投げることがありえないあるいは許容できない時は noexcept を使おう
+訳注。原文の exiting function わからない。
 
-### <a name="Re-never-throw"></a>E.13: Never throw while being the direct owner of an object
+### <a name="Re-never-throw"></a>E.13: オブジェクトの直接の所有者である時は決して例外を投げないように
 
-### <a name="Re-exception-types"></a>E.14: Use purpose-designed user-defined types as exceptions (not built-in types)
+### <a name="Re-exception-types"></a>E.14: 例外の型は、目的のために設計されたユーザ定義型（ビルトイン型でなく）を使おう
 
-### <a name="Re-exception-ref"></a>E.15: Catch exceptions from a hierarchy by reference
+### <a name="Re-exception-ref"></a>E.15: 階層からの例外は参照で捕捉しよう
 
-### <a name="Re-never-fail"></a>E.16: Destructors, deallocation, and swap must never fail
+### <a name="Re-never-fail"></a>E.16: デストラクタ、解放、 swap は決して失敗してはいけません
 
-### <a name="Re-not-always"></a>E.17: Don't try to catch every exception in every function
+### <a name="Re-not-always"></a>E.17: 全ての関数で全ての例外を捕捉しようと試みないように
 
-### <a name="Re-catch"></a>E.18: Minimize the use of explicit try/catch
+### <a name="Re-catch"></a>E.18: 明示的な try/catch の使用は最小にしよう
 
-### <a name="Re-finally"></a>E.19: Use a final_action object to express cleanup if no suitable resource handle is available
+### <a name="Re-finally"></a>E.19: 適切な資源ハンドルが得られない時は、 final_action オブジェクトを使って、後始末を表そう
 
-### <a name="Re-no-throw-raii"></a>E.25: If you can't throw exceptions, simulate RAII for resource management
+### <a name="Re-no-throw-raii"></a>E.25: 例外を投げられない時は、資源管理のための RAII をシミュレートしよう
 
-### <a name="Re-no-throw-crash"></a>E.26: If you can't throw exceptions, consider failing fast
+### <a name="Re-no-throw-crash"></a>E.26: 例外を投げられない時は、速やかに失敗することを考慮しよう
 
-### <a name="Re-no-throw-codes"></a>E.27: If you can't throw exceptions, use error codes systematically
+### <a name="Re-no-throw-codes"></a>E.27: 例外を投げられない時は、エラーコードをシステマチックに使おう
 
-### <a name="Re-no-throw"></a>E.28: Avoid error handling based on global state (e.g. errno)
+### <a name="Re-no-throw"></a>E.28: グローバル状態（例えば errno）を基本とするエラー処理を避けよう
 
-### <a name="Re-specifications"></a>E.30: Don't use exception specifications
+### <a name="Re-specifications"></a>E.30: exception specification は使わないように
 
 ### <a name="Re_catch"></a>E.31: catch 節は正しい順序にしよう
 
@@ -664,185 +666,185 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rconst-ref"></a>Con.3: デフォルトで、 const へのポインタやメンバを渡そう
 
-### <a name="Rconst-const"></a>Con.4: Use const to define objects with values that do not change after construction
+### <a name="Rconst-const"></a>Con.4: 生成された後は値が変わらないオブジェクトを定義するために const を使おう
 
-### <a name="Rconst-constexpr"></a>Con.5: Use constexpr for values that can be computed at compile time
+### <a name="Rconst-constexpr"></a>Con.5: コンパイル時に計算できる値のために constexpr を使おう
 
 ### <a name="Rt-raise"></a>T.1: テンプレートを使って、コードの抽象化のレベルを上げよう
 
-### <a name="Rt-algo"></a>T.2: Use templates to express algorithms that apply to many argument types
+### <a name="Rt-algo"></a>T.2: テンプレートを使って、多くの引数型に適用できるアルゴリズムを表そう
 
-### <a name="Rt-cont"></a>T.3: Use templates to express containers and ranges
+### <a name="Rt-cont"></a>T.3: テンプレートを使って、コンテナと範囲を表そう
 
-### <a name="Rt-expr"></a>T.4: Use templates to express syntax tree manipulation
+### <a name="Rt-expr"></a>T.4: テンプレートを使って、シンタックスツリー操作を表そう
 
-### <a name="Rt-generic-oo"></a>T.5: Combine generic and OO techniques to amplify their strengths, not their costs
+### <a name="Rt-generic-oo"></a>T.5: ジェネリックとオブジェクト指向テクニックを組み合わせて、それらの長所を増加させよう。コストでなく。
 
 ### <a name="Rt-concepts"></a>T.10: テンプレート引数の全てに、コンセプトを指定しよう
 
 ### <a name="Rt-std-concepts"></a>T.11: 可能なときにはいつでも、標準のコンセプトを使おう
 
-### <a name="Rt-auto"></a>T.12: Prefer concept names over auto for local variables
+### <a name="Rt-auto"></a>T.12: ローカル変数には、 auto でなくコンセプト名を選ぼう
 
-### <a name="Rt-shorthand"></a>T.13: Prefer the shorthand notation for simple, single-type argument concepts
+### <a name="Rt-shorthand"></a>T.13: 単純で一つの型の引数のコンセプトには、短縮形ノーテーションを選ぼう
 
-### <a name="Rt-low"></a>T.20: Avoid "concepts" without meaningful semantics
+### <a name="Rt-low"></a>T.20: 意味のあるセマンティクスのない「コンセプト」を避けよう
 
-### <a name="Rt-complete"></a>T.21: Require a complete set of operations for a concept
+### <a name="Rt-complete"></a>T.21: コンセプトには、操作の完全なセットを要求しよう
 
-### <a name="Rt-axiom"></a>T.22: Specify axioms for concepts
+### <a name="Rt-axiom"></a>T.22: コンセプトに公理を指定しよう
 
-### <a name="Rt-refine"></a>T.23: Differentiate a refined concept from its more general case by adding new use patterns.
+### <a name="Rt-refine"></a>T.23: 詳細化したコンセプトをそのより一般的な場合とくべるするために、新しい使用パターンを加えよう
 
-### <a name="Rt-tag"></a>T.24: Use tag classes or traits to differentiate concepts that differ only in semantics.
+### <a name="Rt-tag"></a>T.24: セマンティクスだけが違うコンセプトを区別するために tag classe あるいは trait を使おう
 
-### <a name="Rt-not"></a>T.25: Avoid complementary constraints
+### <a name="Rt-not"></a>T.25: 補完する制約条件を避けよう
 
-### <a name="Rt-use"></a>T.26: Prefer to define concepts in terms of use-patterns rather than simple syntax
+### <a name="Rt-use"></a>T.26: コンセプトを定義する時は、単純なシンタックスでなく使用パターンを使うことを選択しよう
 
-### <a name="Rt-fo"></a>T.40: Use function objects to pass operations to algorithms
+### <a name="Rt-fo"></a>T.40: アルゴリズムに操作を渡すには、関数オブジェクトを使おう
 
-### <a name="Rt-essential"></a>T.41: Require only essential properties in a template's concepts
+### <a name="Rt-essential"></a>T.41: テンプレートのコンセプトには、必須の属性だけを要求しよう
 
-### <a name="Rt-alias"></a>T.42: Use template aliases to simplify notation and hide implementation details
+### <a name="Rt-alias"></a>T.42: ノーテーションを単純にして、実装の詳細を隠すために、テンプレートのエリアスを使おう
 
-### <a name="Rt-using"></a>T.43: Prefer using over typedef for defining aliases
+### <a name="Rt-using"></a>T.43: エリアスを定義する時は、typedef より using を選ぼう
 
-### <a name="Rt-deduce"></a>T.44: Use function templates to deduce class template argument types (where feasible)
+### <a name="Rt-deduce"></a>T.44: クラステンプレートの引数型を推論するために、関数テンプレートを使おう（可能ならば）
 
-### <a name="Rt-regular"></a>T.46: Require template arguments to be at least Regular or SemiRegular
+### <a name="Rt-regular"></a>T.46: テンプレートの引数は少なくても、 Regular あるいは SemiRegular であることを要求しよう
 
-### <a name="Rt-visible"></a>T.47: Avoid highly visible unconstrained templates with common names
+### <a name="Rt-visible"></a>T.47: 一般的な名前を持った、高度に visible で制約されないテンプレートを避けよう
 
-### <a name="Rt-concept-def"></a>T.48: If your compiler does not support concepts, fake them with enable_if
+### <a name="Rt-concept-def"></a>T.48: あなたのコンパイラがコンセプトをサポートしない場合、 enable_if でそのふりをしよう
 
-### <a name="Rt-erasure"></a>T.49: Where possible, avoid type-erasure
+### <a name="Rt-erasure"></a>T.49: 可能なら、type-erasure を避けよう
 
-### <a name="Rt-depend"></a>T.60: Minimize a template's context dependencies
+### <a name="Rt-depend"></a>T.60: テンプレートのコンテキスト依存を最小にしよう
 
-### <a name="Rt-scary"></a>T.61: Do not over-parameterize members (SCARY)
+### <a name="Rt-scary"></a>T.61: メンバをパラメタ化しすぎないように(ひどい)
 
-### <a name="Rt-nondependent"></a>T.62: Place non-dependent class template members in a non-templated base class
+### <a name="Rt-nondependent"></a>T.62: 依存しないクラステンプレートメンバをテンプレート化されていない基底クラスに置こう
 
-### <a name="Rt-specialization"></a>T.64: Use specialization to provide alternative implementations of class templates
+### <a name="Rt-specialization"></a>T.64: クラステンプレートの異なる実装を提供するために特殊化を使おう
 
-### <a name="Rt-tag-dispatch"></a>T.65: Use tag dispatch to provide alternative implementations of a function
+### <a name="Rt-tag-dispatch"></a>T.65: 関数の異なる実装を提供するために tag dispatch を使おう
 
-### <a name="Rt-specialization2"></a>T.67: Use specialization to provide alternative implementations for irregular types
+### <a name="Rt-specialization2"></a>T.67: 不規則な型に対する異なる実装を提供するために特殊化を使おう
 
-### <a name="Rt-cast"></a>T.68: Use {} rather than () within templates to avoid ambiguities
+### <a name="Rt-cast"></a>T.68: テンプレート内では、 () でなく {} を使って、あいまいさを避けよう
 
-### <a name="Rt-customization"></a>T.69: Inside a template, don't make an unqualified nonmember function call unless you intend it to be a customization point
+### <a name="Rt-customization"></a>T.69: テンプレート内では、それを customization point とする意図がない限り、修飾されない非メンバ関数呼び出しをしないように
 
-### <a name="Rt-hier"></a>T.80: Do not naively templatize a class hierarchy
+### <a name="Rt-hier"></a>T.80: クラス階層をナイーブにテンプレートとしないように
 
-### <a name="Rt-array"></a>T.81: Do not mix hierarchies and arrays
+### <a name="Rt-array"></a>T.81: 階層と配列を混ぜないように
 
-### <a name="Rt-linear"></a>T.82: Linearize a hierarchy when virtual functions are undesirable
+### <a name="Rt-linear"></a>T.82: 仮想関数が不適切な場合、階層を linearize しよう
 
-### <a name="Rt-virtual"></a>T.83: Do not declare a member function template virtual
+### <a name="Rt-virtual"></a>T.83: メンバ関数テンプレートを virtual と宣言しないように
 
-### <a name="Rt-abi"></a>T.84: Use a non-template core implementation to provide an ABI-stable interface
+### <a name="Rt-abi"></a>T.84: ABI が安定したインタフェースを提供するために、テンプレート化されないコア実装を使おう
 
-### <a name="Rt-variadic"></a>T.100: Use variadic templates when you need a function that takes a variable number of arguments of a variety of types
+### <a name="Rt-variadic"></a>T.100: いろいろな型の可変個の引数を取る関数が必要な時は、可変引数テンプレートを使おう
 
-### <a name="Rt-variadic-pass"></a>T.101: ??? How to pass arguments to a variadic template ???
+### <a name="Rt-variadic-pass"></a>T.101: ??? 可変引数テンプレートにどのように引数を渡すか ???
 
-### <a name="Rt-variadic-process"></a>T.102: How to process arguments to a variadic template
+### <a name="Rt-variadic-process"></a>T.102: 可変引数テンプレートへの引数をどのように処理するか
 
-### <a name="Rt-variadic-not"></a>T.103: Don't use variadic templates for homogeneous argument lists
+### <a name="Rt-variadic-not"></a>T.103: 均質な引数リストには、可変引数テンプレートを使わないように
 
-### <a name="Rt-metameta"></a>T.120: Use template metaprogramming only when you really need to
+### <a name="Rt-metameta"></a>T.120: 本当に必要な時に限り、テンプレートメタプログラミングを使おう
 
-### <a name="Rt-emulate"></a>T.121: Use template metaprogramming primarily to emulate concepts
+### <a name="Rt-emulate"></a>T.121: テンプレートメタプログラミングは主に、コンセプトをエミュレートするために使おう
 
-### <a name="Rt-tmp"></a>T.122: Use templates (usually template aliases) to compute types at compile time
+### <a name="Rt-tmp"></a>T.122: コンパイル時に型を計算するためにテンプレート（通常はテンプレートエリアス）を使おう
 
-### <a name="Rt-fct"></a>T.123: Use constexpr functions to compute values at compile time
+### <a name="Rt-fct"></a>T.123: コンパイル時に値を計算するために constexpr 関数を使おう
 
-### <a name="Rt-std-tmp"></a>T.124: Prefer to use standard-library TMP facilities
+### <a name="Rt-std-tmp"></a>T.124: 標準ライブラリの TMP 機構を選ぼう
 
-### <a name="Rt-lib"></a>T.125: If you need to go beyond the standard-library TMP facilities, use an existing library
+### <a name="Rt-lib"></a>T.125: 標準ライブラリの TMP 機構の先に行く必要があるならば、既存のライブラリを使おう
 
-### <a name="Rt-name"></a>T.140: Name all operations with potential for reuse
+### <a name="Rt-name"></a>T.140: 再使用される可能性のある全ての操作には名前をつけよう
 
-### <a name="Rt-lambda"></a>T.141: Use an unnamed lambda if you need a simple function object in one place only
+### <a name="Rt-lambda"></a>T.141: 一箇所でだけ、単純な関数オブジェクトが必要な時は、無名ラムダを使おう
 
-### <a name="Rt-var"></a>T.142?: Use template variables to simplify notation
+### <a name="Rt-var"></a>T.142?: ノーテーションを単純にするためにテンプレート変数を使おう
 
-### <a name="Rt-nongeneric"></a>T.143: Don't write unintentionally nongeneric code
+### <a name="Rt-nongeneric"></a>T.143: 意図しないで、汎用的でないコードを書かないように
 
-### <a name="Rt-specialize-function"></a>T.144: Don't specialize function templates
+### <a name="Rt-specialize-function"></a>T.144: 関数テンプレートを特殊化しないように
 
-### <a name="Rt-check-class"></a>T.150: Check that a class matches a concept using static_assert
+### <a name="Rt-check-class"></a>T.150: static_assert を使って、クラスがコンセプトにあっているか確認しよう
 
-### <a name="Rcpl-C"></a>CPL.1: Prefer C++ to C
+### <a name="Rcpl-C"></a>CPL.1: C より C++ を選ぼう
 
-### <a name="Rcpl-subset"></a>CPL.2: If you must use C, use the common subset of C and C++, and compile the C code as C++
+### <a name="Rcpl-subset"></a>CPL.2: C を使わなくてはいけない時は、 C と C++ の共通サブセットを使い、 C コードを C++ としてコンパイルしよう
 
-### <a name="Rcpl-interface"></a>CPL.3: If you must use C for interfaces, use C++ in the calling code using such interfaces
+### <a name="Rcpl-interface"></a>CPL.3: インタフェースに C を使わなくてはいけない時は、それを呼び出すコードで C++ を使おう
 
-### <a name="Rs-file-suffix"></a>SF.1: Use a .cpp suffix for code files and .h for interface files if your project doesn't already follow another convention
+### <a name="Rs-file-suffix"></a>SF.1: あなたのプロジェクトが既に他の慣例に従っていないなら、コードファイルには .cpp サフィックスを、インタフェースファイルに .h を使おう
 
-### <a name="Rs-inline"></a>SF.2: A .h file may not contain object definitions or non-inline function definitions
+### <a name="Rs-inline"></a>SF.2: .h ファイルはオブジェクトの定義やインラインでない関数定義を含んではいけません
 
-### <a name="Rs-declaration-header"></a>SF.3: Use .h files for all declarations used in multiple source files
+### <a name="Rs-declaration-header"></a>SF.3: 複数のソースファイルで使われる全ての宣言はのために .h ファイルを使おう
 
-### <a name="Rs-include-order"></a>SF.4: Include .h files before other declarations in a file
+### <a name="Rs-include-order"></a>SF.4: ファイル内で他の宣言の前に .h ファイルをインクルードしよう
 
-### <a name="Rs-consistency"></a>SF.5: A .cpp file must include the .h file(s) that defines its interface
+### <a name="Rs-consistency"></a>SF.5: .cpp ファイルは、そのインタフェースを定義する .h ファイルをインクルードしなくてはいけません
 
-### <a name="Rs-using"></a>SF.6: Use using namespace directives for transition, for foundation libraries (such as std), or within a local scope (only)
+### <a name="Rs-using"></a>SF.6: using namespace 指令は、移行のため、基本的なライブラリ (std のような)のため、あるいは、ローカルスコープ内（その時に限り）で使おう
 
-### <a name="Rs-using-directive"></a>SF.7: Don't write using namespace at global scope in a header file
+### <a name="Rs-using-directive"></a>SF.7: ヘッダフィル内のグローバルスコープで、 using namespace を書いてはいけません
 
-### <a name="Rs-guards"></a>SF.8: Use #include guards for all .h files
+### <a name="Rs-guards"></a>SF.8: 全ての  .h ファイルで、#include ガードを使おう
 
-### <a name="Rs-cycles"></a>SF.9: Avoid cyclic dependencies among source files
+### <a name="Rs-cycles"></a>SF.9: ソースファイル間の循環依存を避けよう
 
-### <a name="Rs-implicit"></a>SF.10: Avoid dependencies on implicitly #included names
+### <a name="Rs-implicit"></a>SF.10: 暗黙的に #included された名前への依存を避けよう
 
-### <a name="Rs-contained"></a>SF.11: Header files should be self-contained
+### <a name="Rs-contained"></a>SF.11: ヘッダフィルは自己完結しているべきです
 
-### <a name="Rs-namespace"></a>SF.20: Use namespaces to express logical structure
+### <a name="Rs-namespace"></a>SF.20: 論理的構造を表すために名前空間を使おう
 
-### <a name="Rs-unnamed"></a>SF.21: Don't use an unnamed (anonymous) namespace in a header
+### <a name="Rs-unnamed"></a>SF.21: ヘッダでは名前無し (anonymous) 名前空間を使わないように
 
-### <a name="Rs-unnamed2"></a>SF.22: Use an unnamed (anonymous) namespace for all internal/nonexported entities
+### <a name="Rs-unnamed2"></a>SF.22: 全ての内部的／エクスポートされない要素のために、名前無し (anonymous) 名前空間を使おう
 
-### <a name="Rsl-lib"></a>SL.1:  Use libraries wherever possible
+### <a name="Rsl-lib"></a>SL.1:  可能な時はいつでも、ライブラリを使おう
 
-### <a name="Rsl-sl"></a>SL.2: Prefer the standard library to other libraries
+### <a name="Rsl-sl"></a>SL.2: 他のライブラリよりは、標準ライブラリを選ぼう
 
-### <a name="sl-std"></a>SL.3: Do not add non-standard entities to namespace std
+### <a name="sl-std"></a>SL.3: 標準でない要素を、 std 名前空間に入れないこと
 
-### <a name="sl-safe"></a>SL.4: Use the standard library in a type-safe manner
+### <a name="sl-safe"></a>SL.4: 標準ライブラリは、型安全なように使おう
 
-### <a name="Rsl-arrays"></a>SL.con.1: Prefer using STL array or vector instead of a C array
+### <a name="Rsl-arrays"></a>SL.con.1: C 配列より、 STL array あるいは vector を使おう
 
-### <a name="Rsl-vector"></a>SL.con.2: Prefer using STL vector by default unless you have a reason to use a different container
+### <a name="Rsl-vector"></a>SL.con.2: 他のコンテナを使う理由が無い限り、デフォルトで STL vector を使おう
 
-### <a name="Rsl-bounds"></a>SL.con.3: Avoid bounds errors
+### <a name="Rsl-bounds"></a>SL.con.3: 境界エラーを避けよう
 
-### <a name="Rstr-string"></a>SL.str.1: Use std::string to own character sequences
+### <a name="Rstr-string"></a>SL.str.1: 文字シーケンスを所有するには、std::string を使おう
 
-### <a name="Rstr-view"></a>SL.str.2: Use std::string_view or gsl::string_span to refer to character sequences
+### <a name="Rstr-view"></a>SL.str.2: 文字シーケンスを参照するには、 std::string_view あるいは gsl::string_span を使おう
 
-### <a name="Rstr-zstring"></a>SL.str.3: Use zstring or czstring to refer to a C-style, zero-terminated, sequence of characters
+### <a name="Rstr-zstring"></a>SL.str.3: C スタイルのゼロ終了する文字シーケンスを参照するには、 zstring あるいは czstring を使おう
 
-### <a name="Rstr-char*"></a>SL.str.4: Use char* to refer to a single character
+### <a name="Rstr-char*"></a>SL.str.4: 単一の文字を参照するには、 char* を使おう
 
-### <a name="Rstr-byte"></a>SL.str.5: Use std::byte to refer to byte values that do not necessarily represent characters
+### <a name="Rstr-byte"></a>SL.str.5: 必ずしも文字を表さないバイト値を参照するには、 std::byte を使おう
 
-### <a name="Rstr-locale"></a>SL.str.10: Use std::string when you need to perform locale-sensitive string operations
+### <a name="Rstr-locale"></a>SL.str.10: ロケールに敏感な文字列操作をする必要がある時は std::string を使おう
 
-### <a name="Rstr-span"></a>SL.str.11: Use gsl::string_span rather than std::string_view when you need to mutate a string
+### <a name="Rstr-span"></a>SL.str.11: 文字列を変更する必要がある時は、std::string_view でなく gsl::string_span を使おう
 
-### <a name="Rstr-s"></a>SL.str.12: Use the s suffix for string literals meant to be standard-library strings
+### <a name="Rstr-s"></a>SL.str.12: 標準ライブラリの文字列を意味する文字列リテラルには s サフィックスを使おう
 
-### <a name="Rio-low"></a>SL.io.1: Use character-level input only when you have to
+### <a name="Rio-low"></a>SL.io.1: 文字レベルの入力は、必要がある時だけ、使おう
 
-### <a name="Rio-validate"></a>SL.io.2: When reading, always consider ill-formed input
+### <a name="Rio-validate"></a>SL.io.2: 読む時は、常に誤った形式の入力を考慮しよう
 
 ### <a name="Rio-streams"></a>SL.io.3: I/O には、 iostreams を選ぼう
 
@@ -850,65 +852,64 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rio-endl"></a>SL.io.50: endl は使わないこと
 
-### <a name="Rclib-jmp"></a>SL.C.1: Don't use setjmp/longjmp
+### <a name="Rclib-jmp"></a>SL.C.1: setjmp/longjmp は使わないように
 
-### <a name="Ra-stable"></a>A.1: Separate stable from less stable part of code
+### <a name="Ra-stable"></a>A.1: コードの安定した部分をあまりそうでない部分と分離しよう
 
-### <a name="Ra-lib"></a>A.2: Express potentially reusable parts as a library
+### <a name="Ra-lib"></a>A.2: 潜在的に再利用可能な部分はライブラリとして表そう
 
-### <a name="Ra-dag"></a>A.4: There should be no cycles among libraries
+### <a name="Ra-dag"></a>A.4: ライブラリ間に循環は無いべきです
 
-### <a name="Rnr-top"></a>NR.1: Don't: All declarations should be at the top of a function
+### <a name="Rnr-top"></a>NR.1: ダメ：全ての宣言は関数の先頭にあるべきです
 
-### <a name="Rnr-single-return"></a>NR.2: Don't: Have only a single return-statement in a function
+### <a name="Rnr-single-return"></a>NR.2: ダメ：関数には一つだけの return 文があるべきです
 
-### <a name="Rnr-no-exceptions"></a>NR.3: Don't: Don't use exceptions
+### <a name="Rnr-no-exceptions"></a>NR.3: ダメ：例外を使わないように
 
-### <a name="Rnr-lots-of-files"></a>NR.4: Don't: Place each class declaration in its own source file
+### <a name="Rnr-lots-of-files"></a>NR.4: ダメ：クラスの宣言はそれぞれ独自のソースファイルに置こう
 
-### <a name="Rnr-two-phase-init"></a>NR.5: Don't: Don't do substantive work in a constructor; instead use two-phase initialization
+### <a name="Rnr-two-phase-init"></a>NR.5: ダメ：コンストラクタでたくさんの作業をしてはいけません；その代わり、２相の初期化を使おう
 
-### <a name="Rnr-goto-exit"></a>NR.6: Don't: Place all cleanup actions at the end of a function and goto exit
+### <a name="Rnr-goto-exit"></a>NR.6: ダメ：関数の終わりに全ての後始末アクションを置いて、goto で抜けよう
 
-### <a name="Rnr-protected-data"></a>NR.7: Don't: Make all data members protected
+### <a name="Rnr-protected-data"></a>NR.7: ダメ： 全てのデータメンバを protected にしよう
 
-### <a name="SS-gsl-smartptrconcepts"></a>GSL.ptr: Smart pointer concepts
+### <a name="Rl-comments"></a>NL.1: コードで明確に書けることをコメントで言わないように
 
-### <a name="Rl-comments"></a>NL.1: Don't say in comments what can be clearly stated in code
+### <a name="Rl-comments-intent"></a>NL.2: コメントでは意図を書こう
 
-### <a name="Rl-comments-intent"></a>NL.2: State intent in comments
+### <a name="Rl-comments-crisp"></a>NL.3: コメントは簡潔にしよう
 
-### <a name="Rl-comments-crisp"></a>NL.3: Keep comments crisp
+### <a name="Rl-indent"></a>NL.4: 一貫したインデントスタイルを保とう
 
-### <a name="Rl-indent"></a>NL.4: Maintain a consistent indentation style
+### <a name="Rl-name-type"></a>NL.5: 名前に型情報をエンコードしないように
 
-### <a name="Rl-name-type"></a>NL.5: Avoid encoding type information in names
+### <a name="Rl-name-length"></a>NL.7: 名前の長さは、ほぼ、そのスコープの長さと比例させよう
 
-### <a name="Rl-name-length"></a>NL.7: Make the length of a name roughly proportional to the length of its scope
+### <a name="Rl-name"></a>NL.8: 一貫した名前付けスタイルを使おう
 
-### <a name="Rl-name"></a>NL.8: Use a consistent naming style
+### <a name="Rl-all-caps"></a>NL.9: ALL_CAPS、全部大文字、はマクロ名にだけ使おう
 
-### <a name="Rl-all-caps"></a>NL.9: Use ALL_CAPS for macro names only
+### <a name="Rl-camel"></a>NL.10: underscore_style の名前を選ぼう
 
-### <a name="Rl-camel"></a>NL.10: Prefer underscore_style names
+### <a name="Rl-space"></a>NL.15: 空白はほどほどに使おう
 
-### <a name="Rl-space"></a>NL.15: Use spaces sparingly
+### <a name="Rl-literals"></a>NL.11: リテラルは読みやすくしよう
 
-### <a name="Rl-literals"></a>NL.11: Make literals readable
+### <a name="Rl-order"></a>NL.16: 慣用的なクラスメンバ宣言順を使おう
 
-### <a name="Rl-order"></a>NL.16: Use a conventional class member declaration order
+### <a name="Rl-knr"></a>NL.17: K&R に由来するレイアウトを使おう
 
-### <a name="Rl-knr"></a>NL.17: Use K&R-derived layout
+### <a name="Rl-ptr"></a>NL.18: C++ スタイルの宣言レイアウトを使おう
 
-### <a name="Rl-ptr"></a>NL.18: Use C++-style declarator layout
+### <a name="Rl-misread"></a>NL.19: 読み間違いをしやすい名前を避けよう
 
-### <a name="Rl-misread"></a>NL.19: Avoid names that are easily misread
+### <a name="Rl-stmt"></a>NL.20: 同じ行に２つの文を置かないように
 
-### <a name="Rl-stmt"></a>NL.20: Don't place two statements on the same line
+### <a name="Rl-dcl"></a>NL.21: 一つの宣言には、一つの名前（だけ）を宣言しよう
 
-### <a name="Rl-dcl"></a>NL.21: Declare one name (only) per declaration
+### <a name="Rl-void"></a>NL.25: void は引数型に使わないように
 
-### <a name="Rl-void"></a>NL.25: Don't use void as an argument type
+### <a name="Rl-const"></a>NL.26: 慣用的な const ノーテーションを使おう
 
-### <a name="Rl-const"></a>NL.26: Use conventional const notation
-
+終わり
