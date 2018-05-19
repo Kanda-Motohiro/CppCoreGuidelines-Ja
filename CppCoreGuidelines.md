@@ -1,7 +1,7 @@
-Here is a Japanese translation of (only) rule titles (for now) from [C++ Core Guidelines](https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md) as of April 16, 2018 by Motohiro Kanda(kanda.motohiro@gmail.com). This translation is disributed under the [LICENSE](https://github.com/isocpp/CppCoreGuidelines/blob/master/LICENSE).
-LICENSE is very restrictive but according to this [issue discussion on translation](https://github.com/isocpp/CppCoreGuidelines/issues/1065), publishing translation is permitted.
+Here is a Japanese translation of (only) rule titles (for now) from [C++ Core Guidelines](https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md) as of April 16, 2018 by kanda.motohiro@gmail.com. This translation is disributed under the [LICENSE](https://github.com/isocpp/CppCoreGuidelines/blob/master/LICENSE).
+The LICENSE is very restrictive but according to this [issue discussion on translation](https://github.com/isocpp/CppCoreGuidelines/issues/1065), publishing a translation is permitted.
 
-以下は、C++ Core Guidelines の規則のタイトルだけを訳したものです。ライセンスファイルによれば、訳をこのように公開することは不可能なのですが、引用したイシューでは、許可されているので、やることにしました。
+以下は、C++ Core Guidelines の規則のタイトルだけを訳したものです。ライセンスファイルによれば、訳をこのように公開することは不可能なのですが、引用したイシューでは、許可されているようです。
 
 ### <a name="R0"></a>In.0: 落ち着いて!
 
@@ -354,215 +354,215 @@ LICENSE is very restrictive but according to this [issue discussion on translati
 
 ### <a name="Rr-newdelete"></a>R.11: 明示的に new と delete を呼ぶのを避けよう
 
-### <a name="Rr-immediate-alloc"></a>R.12: Immediately give the result of an explicit resource allocation to a manager object
+### <a name="Rr-immediate-alloc"></a>R.12: 明示的な資源確保の結果は、直ちに管理オブジェクトに渡そう
 
-### <a name="Rr-single-alloc"></a>R.13: Perform at most one explicit resource allocation in a single expression statement
+### <a name="Rr-single-alloc"></a>R.13: 一つの式の中では、最大一つの明示的な資源確保をしよう
 
-### <a name="Rr-ap"></a>R.14: ??? array vs. pointer parameter
+### <a name="Rr-ap"></a>R.14: ??? 配列対ポインタ引数
 
 ### <a name="Rr-pair"></a>R.15: 対になる確保と解放は必ず両方、多重定義しよう
 
 ### <a name="Rr-owner"></a>R.20: 所有を示すため、 unique_ptr あるいは shared_ptr を使おう
 
-### <a name="Rr-unique"></a>R.21: Prefer unique_ptr over shared_ptr unless you need to share ownership
+### <a name="Rr-unique"></a>R.21: 所有権を共有する必要がなければ、shared_ptr より unique_ptr を使おう
 
-### <a name="Rr-make_shared"></a>R.22: Use make_shared() to make shared_ptrs
+### <a name="Rr-make_shared"></a>R.22: shared_ptr は make_shared() で作ろう
 
-### <a name="Rr-make_unique"></a>R.23: Use make_unique() to make unique_ptrs
+### <a name="Rr-make_unique"></a>R.23: unique_ptr は make_unique() で作ろう
 
-### <a name="Rr-weak_ptr"></a>R.24: Use std::weak_ptr to break cycles of shared_ptrs
+### <a name="Rr-weak_ptr"></a>R.24: shared_ptr の循環を断ち切るには std::weak_ptr を使おう
 
-### <a name="Rr-smartptrparam"></a>R.30: Take smart pointers as parameters only to explicitly express lifetime semantics
+### <a name="Rr-smartptrparam"></a>R.30: 引数にスマートポインタを取るのは明示的に存在期間セマンティクスを表す必要のある時だけにしよう
 
-### <a name="Rr-smart"></a>R.31: If you have non-std smart pointers, follow the basic pattern from std
+### <a name="Rr-smart"></a>R.31: 標準にないスマートポインタを作る時は、 std の基本的なパターンに従おう
 
-### <a name="Rr-uniqueptrparam"></a>R.32: Take a unique_ptr<widget> parameter to express that a function assumes ownership of a widget
+### <a name="Rr-uniqueptrparam"></a>R.32: unique_ptr<widget> 引数を取って、関数が widget の所有権を前提とすることを表そう
 
-### <a name="Rr-reseat"></a>R.33: Take a unique_ptr<widget>& parameter to express that a function reseats thewidget
+### <a name="Rr-reseat"></a>R.33: unique_ptr<widget>& 引数を取って、関数が widget を reseat することを表そう
 
-### <a name="Rr-sharedptrparam-owner"></a>R.34: Take a shared_ptr<widget> parameter to express that a function is part owner
+### <a name="Rr-sharedptrparam-owner"></a>R.34: shared_ptr<widget> 引数を取って、関数が widget の所有者の一部であることを表そう
 
-### <a name="Rr-sharedptrparam"></a>R.35: Take a shared_ptr<widget>& parameter to express that a function might reseat the shared pointer
+### <a name="Rr-sharedptrparam"></a>R.35: shared_ptr<widget>& 引数を取って、関数がその共用ポインタを reseat する可能性のあることを表そう
 
-### <a name="Rr-sharedptrparam-const"></a>R.36: Take a const shared_ptr<widget>& parameter to express that it might retain a reference count to the object ???
+### <a name="Rr-sharedptrparam-const"></a>R.36: const shared_ptr<widget>& 引数を取って、それがそのオブジェクトへの参照カウントを保持し続ける可能性があることを表そう
 
-### <a name="Rr-smartptrget"></a>R.37: Do not pass a pointer or reference obtained from an aliased smart pointer
+### <a name="Rr-smartptrget"></a>R.37: エリアスしたスマートポインタから得たポインタあるいは参照を渡さないこと
 
-### <a name="Res-lib"></a>ES.1: Prefer the standard library to other libraries and to "handcrafted code"
+### <a name="Res-lib"></a>ES.1: 他のライブラリや「手作りコード」より標準ライブラリを選ぼう
 
-### <a name="Res-abstr"></a>ES.2: Prefer suitable abstractions to direct use of language features
+### <a name="Res-abstr"></a>ES.2: 言語機能を直接使うより、適切な抽象化を選ぼう
 
-### <a name="Res-scope"></a>ES.5: Keep scopes small
+### <a name="Res-scope"></a>ES.5: スコープを小さく保とう
 
-### <a name="Res-cond"></a>ES.6: Declare names in for-statement initializers and conditions to limit scope
+### <a name="Res-cond"></a>ES.6: for 文の初期化子と条件で名前を宣言し、スコープを制限しよう
 
-### <a name="Res-name-length"></a>ES.7: Keep common and local names short, and keep uncommon and nonlocal names longer
+### <a name="Res-name-length"></a>ES.7: 一般的でローカルな名前は短く、一般的でなくローカルでない名前は長くしよう
 
-### <a name="Res-name-similar"></a>ES.8: Avoid similar-looking names
+### <a name="Res-name-similar"></a>ES.8: 似て見える名前を避けよう
 
-### <a name="Res-not-CAPS"></a>ES.9: Avoid ALL_CAPS names
+### <a name="Res-not-CAPS"></a>ES.9: ALL_CAPS 、全部大文字の名前を避けよう
 
-### <a name="Res-name-one"></a>ES.10: Declare one name (only) per declaration
+### <a name="Res-name-one"></a>ES.10: 一つの宣言では一つ（だけ）名前を宣言しよう
 
-### <a name="Res-auto"></a>ES.11: Use auto to avoid redundant repetition of type names
+### <a name="Res-auto"></a>ES.11: 型名の冗長な繰り返しを避けるため auto を使おう
 
-### <a name="Res-reuse"></a>ES.12: Do not reuse names in nested scopes
+### <a name="Res-reuse"></a>ES.12: ネストしたスコープ内で名前を再使用しないように
 
-### <a name="Res-always"></a>ES.20: Always initialize an object
+### <a name="Res-always"></a>ES.20: オブジェクトは常に初期化しよう
 
-### <a name="Res-introduce"></a>ES.21: Don't introduce a variable (or constant) before you need to use it
+### <a name="Res-introduce"></a>ES.21: 使う必要が起きる前に変数（あるいは定数）を導入しないように
 
-### <a name="Res-init"></a>ES.22: Don't declare a variable until you have a value to initialize it with
+### <a name="Res-init"></a>ES.22: 変数を初期化する値を得る前に変数を宣言しないように
 
-### <a name="Res-list"></a>ES.23: Prefer the {} initializer syntax
+### <a name="Res-list"></a>ES.23: {} 初期化子シンタックスを選ぼう
 
-### <a name="Res-unique"></a>ES.24: Use a unique_ptr<T> to hold pointers
+### <a name="Res-unique"></a>ES.24: ポインタを持つには unique_ptr<T> を使おう
 
-### <a name="Res-const"></a>ES.25: Declare an object const or constexpr unless you want to modify its value later on
+### <a name="Res-const"></a>ES.25: 後で値を変更したいと思わないなら、オブジェクトは const あるいは constexpr uと宣言しよう
 
-### <a name="Res-recycle"></a>ES.26: Don't use a variable for two unrelated purposes
+### <a name="Res-recycle"></a>ES.26: ２つの無関係な目的のために一つの変数を使わないこと
 
-### <a name="Res-stack"></a>ES.27: Use std::array or stack_array for arrays on the stack
+### <a name="Res-stack"></a>ES.27: スタック上の配列は、 std::array あるいは stack_array を使おう
 
-### <a name="Res-lambda-init"></a>ES.28: Use lambdas for complex initialization, especially of const variables
+### <a name="Res-lambda-init"></a>ES.28: 複雑な初期化、特に const 変数、のためには lambdas を使おう
 
-### <a name="Res-macros"></a>ES.30: Don't use macros for program text manipulation
+### <a name="Res-macros"></a>ES.30: プログラムテキストを操作するためにマクロを使わないように
 
-### <a name="Res-macros2"></a>ES.31: Don't use macros for constants or "functions"
+### <a name="Res-macros2"></a>ES.31: 定数や「関数」のためにマクロを使わないように
 
-### <a name="Res-ALL_CAPS"></a>ES.32: Use ALL_CAPS for all macro names
+### <a name="Res-ALL_CAPS"></a>ES.32: マクロ名には ALL_CAPS 、全て大文字、を使おう
 
-### <a name="Res-MACROS"></a>ES.33: If you must use macros, give them unique names
+### <a name="Res-MACROS"></a>ES.33: マクロを使わなくてはいけない時は、一意の名前をつけよう
 
-### <a name="Res-ellipses"></a> ES.34: Don't define a (C-style) variadic function
+### <a name="Res-ellipses"></a> ES.34: (C-スタイルの) 可変引数関数を定義しないように
 
-### <a name="Res-complicated"></a>ES.40: Avoid complicated expressions
+### <a name="Res-complicated"></a>ES.40: 複雑な式を避けよう
 
-### <a name="Res-parens"></a>ES.41: If in doubt about operator precedence, parenthesize
+### <a name="Res-parens"></a>ES.41: 演算子の優先順位に疑問がある時は、かっこをつけよう
 
-### <a name="Res-ptr"></a>ES.42: Keep use of pointers simple and straightforward
+### <a name="Res-ptr"></a>ES.42: ポインタの使用は単純で単刀直入としよう
 
 ### <a name="Res-order"></a>ES.43: Avoid expressions with undefined order of evaluation
 
 ### <a name="Res-order-fct"></a>ES.44: Don't depend on order of evaluation of function arguments
 
-### <a name="Res-magic"></a>ES.45: Avoid "magic constants"; use symbolic constants
+### <a name="Res-magic"></a>ES.45: 「マジック定数」を避けよう；シンボリック定数を使おう
 
-### <a name="Res-narrowing"></a>ES.46: Avoid lossy (narrowing, truncating) arithmetic conversions
+### <a name="Res-narrowing"></a>ES.46: 損失のある (narrowing, truncating) 算術変換を避けよう
 
-### <a name="Res-nullptr"></a>ES.47: Use nullptr rather than 0 or NULL
+### <a name="Res-nullptr"></a>ES.47: 0 あるいは NULL でなく nullptr を使おう
 
-### <a name="Res-casts"></a>ES.48: Avoid casts
+### <a name="Res-casts"></a>ES.48: キャストを避けよう
 
-### <a name="Res-casts-named"></a>ES.49: If you must use a cast, use a named cast
+### <a name="Res-casts-named"></a>ES.49: キャストをしなくてはいけない時は、名前のあるキャストを使おう
 
-### <a name="Res-casts-const"></a>ES.50: Don't cast away const
+### <a name="Res-casts-const"></a>ES.50: const をキャストして取り除かないように
 
-### <a name="Res-range-checking"></a>ES.55: Avoid the need for range checking
+### <a name="Res-range-checking"></a>ES.55: 範囲チェックの必要性を避けよう
 
-### <a name="Res-move"></a>ES.56: Write std::move() only when you need to explicitly move an object to another scope
+### <a name="Res-move"></a>ES.56: std::move() は、明示的にオブジェクトを他のスコープに移動する必要がある時だけ使おう
 
-### <a name="Res-new"></a>ES.60: Avoid new and delete outside resource management functions
+### <a name="Res-new"></a>ES.60: 資源管理関数の外での new と delete を避けよう
 
-### <a name="Res-del"></a>ES.61: Delete arrays using delete[] and non-arrays using delete
+### <a name="Res-del"></a>ES.61: 配列は delete[] で削除し、配列でないものは delete で削除しよう
 
-### <a name="Res-arr2"></a>ES.62: Don't compare pointers into different arrays
+### <a name="Res-arr2"></a>ES.62: 異なる配列の間で、ポインタの比較をしないように
 
-### <a name="Res-slice"></a>ES.63: Don't slice
+### <a name="Res-slice"></a>ES.63: スライスしないように
 
-### <a name="Res-construct"></a>ES.64: Use the T{e}notation for construction
+### <a name="Res-construct"></a>ES.64: コンストラクタは T{e} ノーテーションを使おう
 
-### <a name="Res-deref"></a>ES.65: Don't dereference an invalid pointer
+### <a name="Res-deref"></a>ES.65: 不正なポインタを参照外ししないように
 
-### <a name="Res-switch-if"></a>ES.70: Prefer a switch-statement to an if-statement when there is a choice
+### <a name="Res-switch-if"></a>ES.70: 選択の余地があるなら、 if 文より switch 文を選ぼう
 
-### <a name="Res-for-range"></a>ES.71: Prefer a range-for-statement to a for-statement when there is a choice
+### <a name="Res-for-range"></a>ES.71: 選択の余地があるなら、for 文より範囲 for 文を選ぼう
 
-### <a name="Res-for-while"></a>ES.72: Prefer a for-statement to a while-statement when there is an obvious loop variable
+### <a name="Res-for-while"></a>ES.72: 明らかなループ変数がある時は、while 文より for 文を選ぼう
 
-### <a name="Res-while-for"></a>ES.73: Prefer a while-statement to a for-statement when there is no obvious loop variable
+### <a name="Res-while-for"></a>ES.73: 明らかなループ変数がない時は、for 文より while 文を選ぼう
 
-### <a name="Res-for-init"></a>ES.74: Prefer to declare a loop variable in the initializer part of a for-statement
+### <a name="Res-for-init"></a>ES.74: for 文の初期化部分でループ変数を宣言するようにしよう
 
-### <a name="Res-do"></a>ES.75: Avoid do-statements
+### <a name="Res-do"></a>ES.75: do 文を避けよう
 
-### <a name="Res-goto"></a>ES.76: Avoid goto
+### <a name="Res-goto"></a>ES.76: goto を避けよう
 
-### <a name="Res-continue"></a>ES.77: Minimize the use of break and continue in loops
+### <a name="Res-continue"></a>ES.77: ループでの break と continue の使用は最小としよう
 
-### <a name="Res-break"></a>ES.78: Always end a non-empty case with a break
+### <a name="Res-break"></a>ES.78: 空でない case は常に break で終わらせよう
 
-### <a name="Res-default"></a>ES.79: Use default to handle common cases (only)
+### <a name="Res-default"></a>ES.79: 一般的な場合を扱うために（その時に限り） default を使おう
 
-### <a name="Res-noname"></a>ES.84: Don't (try to) declare a local variable with no name
+### <a name="Res-noname"></a>ES.84: 名前のないローカル変数を宣言し（ようと試み）ないように
 
-### <a name="Res-empty"></a>ES.85: Make empty statements visible
+### <a name="Res-empty"></a>ES.85: 空の文は目立つようにしよう
 
-### <a name="Res-loop-counter"></a>ES.86: Avoid modifying loop control variables inside the body of raw for-loops
+### <a name="Res-loop-counter"></a>ES.86: 生の for ループの本体内で、ループ制御変数を変更するのは避けよう
 
-### <a name="Res-if"></a>ES.87: Don't add redundant == or != to conditions
+### <a name="Res-if"></a>ES.87: 条件に冗長な == あるいは != をつけないように
 
-### <a name="Res-mix"></a>ES.100: Don't mix signed and unsigned arithmetic
+### <a name="Res-mix"></a>ES.100: 符号ありと符号なしの算術を混ぜないように
 
-### <a name="Res-unsigned"></a>ES.101: Use unsigned types for bit manipulation
+### <a name="Res-unsigned"></a>ES.101: ビット操作には符号なしの型を使おう
 
-### <a name="Res-signed"></a>ES.102: Use signed types for arithmetic
+### <a name="Res-signed"></a>ES.102: 算術には符号ありの型を使おう
 
-### <a name="Res-overflow"></a>ES.103: Don't overflow
+### <a name="Res-overflow"></a>ES.103: オーバーフローしないように
 
-### <a name="Res-underflow"></a>ES.104: Don't underflow
+### <a name="Res-underflow"></a>ES.104: アンダーフローしないように
 
-### <a name="Res-zero"></a>ES.105: Don't divide by zero
+### <a name="Res-zero"></a>ES.105: ゼロで割り算をしないように
 
-### <a name="Res-nonnegative"></a>ES.106: Don't try to avoid negative values by using unsigned
+### <a name="Res-nonnegative"></a>ES.106: 符号なしを使うことで、負数を避けようとしないこと
 
-### <a name="Res-subscripts"></a>ES.107: Don't use unsigned for subscripts, prefer gsl::index
+### <a name="Res-subscripts"></a>ES.107: 添字に符号なしを使わないように； gsl::index を選ぼう
 
-### <a name="Rper-reason"></a>Per.1: Don't optimize without reason
+### <a name="Rper-reason"></a>Per.1: 理由なしに最適化しないように
 
-### <a name="Rper-Knuth"></a>Per.2: Don't optimize prematurely
+### <a name="Rper-Knuth"></a>Per.2: 早すぎる最適化はしないように
 
-### <a name="Rper-critical"></a>Per.3: Don't optimize something that's not performance critical
+### <a name="Rper-critical"></a>Per.3: 性能にクリティカルでないものを最適化しないように
 
-### <a name="Rper-simple"></a>Per.4: Don't assume that complicated code is necessarily faster than simple code
+### <a name="Rper-simple"></a>Per.4: 複雑なコードは単純なコードに比べて必然的に速いと思わないように
 
-### <a name="Rper-low"></a>Per.5: Don't assume that low-level code is necessarily faster than high-level code
+### <a name="Rper-low"></a>Per.5: 低レベルのコードは高レベルのコードに比べて必然的に速いと思わないように
 
-### <a name="Rper-measure"></a>Per.6: Don't make claims about performance without measurements
+### <a name="Rper-measure"></a>Per.6: 測定しないで性能を論じないように
 
-### <a name="Rper-efficiency"></a>Per.7: Design to enable optimization
+### <a name="Rper-efficiency"></a>Per.7: 最適化を可能とするように設計しよう
 
-### <a name="Rper-type"></a>Per.10: Rely on the static type system
+### <a name="Rper-type"></a>Per.10: 静的な型システムに依存しよう
 
-### <a name="Rper-Comp"></a>Per.11: Move computation from run time to compile time
+### <a name="Rper-Comp"></a>Per.11: 計算を、実行時からコンパイル時に移動しよう
 
-### <a name="Rper-alias"></a>Per.12: Eliminate redundant aliases
+### <a name="Rper-alias"></a>Per.12: 冗長な aliase を除こう
 
-### <a name="Rper-indirect"></a>Per.13: Eliminate redundant indirections
+### <a name="Rper-indirect"></a>Per.13: 冗長な間接化を除こう
 
-### <a name="Rper-alloc"></a>Per.14: Minimize the number of allocations and deallocations
+### <a name="Rper-alloc"></a>Per.14: 確保と解放の数を最小にしよう
 
-### <a name="Rper-alloc0"></a>Per.15: Do not allocate on a critical branch
+### <a name="Rper-alloc0"></a>Per.15: クリティカルな箇所では確保しないように
 
-### <a name="Rper-compact"></a>Per.16: Use compact data structures
+### <a name="Rper-compact"></a>Per.16: コンパクトなデータ構造を使おう
 
-### <a name="Rper-struct"></a>Per.17: Declare the most used member of a time-critical struct first
+### <a name="Rper-struct"></a>Per.17: 時間にクリティカルな構造体では最も使われるメンバを先頭に宣言しよう
 
-### <a name="Rper-space"></a>Per.18: Space is time
+### <a name="Rper-space"></a>Per.18: 空間は時間です
 
-### <a name="Rper-access"></a>Per.19: Access memory predictably
+### <a name="Rper-access"></a>Per.19: 予測可能なようにメモリアクセスをしよう
 
-### <a name="Rper-context"></a>Per.30: Avoid context switches on the critical path
+### <a name="Rper-context"></a>Per.30: クリティカルなパスではコンテキストスイッチを避けよう
 
-### <a name="Rconc-multi"></a>CP.1: Assume that your code will run as part of a multi-threaded program
+### <a name="Rconc-multi"></a>CP.1: あなたのコードがマルチスレッドプログラムの一部として実行するかもしれないことを前提としよう
 
-### <a name="Rconc-races"></a>CP.2: Avoid data races
+### <a name="Rconc-races"></a>CP.2: データ競合を避けよう
 
-### <a name="Rconc-data"></a>CP.3: Minimize explicit sharing of writable data
+### <a name="Rconc-data"></a>CP.3: 書き込み可能なデータの明示的な共用は最小にしよう
 
-### <a name="Rconc-task"></a>CP.4: Think in terms of tasks, rather than threads
+### <a name="Rconc-task"></a>CP.4: スレッドでなく、タスクの言葉で考えよう
 
-### <a name="Rconc-volatile"></a>CP.8: Don't try to use volatile for synchronization
+### <a name="Rconc-volatile"></a>CP.8: 同期のために volatile を使わないように
 
 ### <a name="Rconc-tools"></a>CP.9: Whenever feasible use tools to validate your concurrent code
 
