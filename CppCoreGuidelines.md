@@ -3,8 +3,6 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 以下は、C++ Core Guidelines の規則のタイトルだけを訳したものです。ライセンスファイルによれば、訳をこのように公開することは不可能なのですが、引用したイシューでは、許可されているようです。
 
-### <a name="R0"></a>In.0: 落ち着いて!
-
 ### <a name="Rp-direct"></a>P.1: アイディアは直接コードで表現しよう
 
 ### <a name="Rp-Cplusplus"></a>P.2: ISO Standard C++ で書こう
@@ -109,7 +107,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rf-range"></a>F.24: 半開シーケンスを指定するには、span<T> あるいは span_p<T> を使おう
 
-### <a name="Rf-zstring"></a>F.25: C-スタイル文字列を指定するには、zstring あるいは not_null<zstring> を使おう
+### <a name="Rf-zstring"></a>F.25: C-スタイル文字列を指定するには、`zstring` あるいは `not_null<zstring>` を使おう
 
 ### <a name="Rf-unique_ptr"></a>F.26: ポインタが必要である時、所有権を移動するには、unique_ptr<T> を使おう
 
@@ -175,8 +173,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rc-dtor-ptr2"></a>C.33: もしクラスが、所有者であるポインタメンバを持つなら、デストラクタを定義しよう
 
-### <a name="Rc-dtor-virtual"></a>C.35: 基底クラスのデストラクタは、 public かつ virtual であるか、protected かつ virtual 
-でないかのいずれかであるべきです
+### <a name="Rc-dtor-virtual"></a>C.35: 基底クラスのデストラクタは、 public かつ virtual であるか、protected かつ virtual でないかのいずれかであるべきです
 
 ### <a name="Rc-dtor-fail"></a>C.36: デストラクタは失敗してはいけません
 
@@ -574,8 +571,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rconc-join"></a>CP.23: join するスレッドは、スコープ内のコンテナとみなそう
 
-### <a name="Rconc-detach"></a>CP.24: デタッチしたスレッドは、グローバルなコンテナとみなそう
-訳注。デタッチした　は原文にないが、あったほうがいい。
+### <a name="Rconc-detach"></a>CP.24: スレッドは、グローバルなコンテナとみなそう
 
 ### <a name="Rconc-joining_thread"></a>CP.25: std::thread より gsl::joining_thread を選ぼう
 
