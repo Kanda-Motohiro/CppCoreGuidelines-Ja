@@ -435,9 +435,9 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Res-ptr"></a>ES.42: ポインタの使用は単純で単刀直入としよう
 
-### <a name="Res-order"></a>ES.43: Avoid expressions with undefined order of evaluation
+### <a name="Res-order"></a>ES.43: 評価の順序が未定義となる式を避けよう
 
-### <a name="Res-order-fct"></a>ES.44: Don't depend on order of evaluation of function arguments
+### <a name="Res-order-fct"></a>ES.44: 関数引数の評価の順序に依存してはいけません
 
 ### <a name="Res-magic"></a>ES.45: 「マジック定数」を避けよう；シンボリック定数を使おう
 
@@ -453,10 +453,11 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Res-range-checking"></a>ES.55: 範囲チェックの必要性を避けよう
 
-### <a name="Res-move"></a>ES.56: std 
+### <a name="Res-move"></a>ES.56: `std::move()` は、オブジェクトを明示的に他のスコープに移動する必要のある時だけ使おう
+
 ### <a name="Res-new"></a>ES.60: 資源管理関数の外での `new` と `delete` を避けよう
 
-### <a name="Res-del"></a>ES.61: 配列は ``delete`[]` で削除し、配列でないものは `delete` で削除しよう
+### <a name="Res-del"></a>ES.61: 配列は `delete[]` で削除し、配列でないものは `delete` で削除しよう
 
 ### <a name="Res-arr2"></a>ES.62: 異なる配列の間で、ポインタの比較をしないように
 
@@ -508,7 +509,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Res-nonnegative"></a>ES.106: 符号なしを使うことで、負数を避けようとしないこと
 
-### <a name="Res-subscripts"></a>ES.107: 添字に符号なしを使わないように； gsl 
+### <a name="Res-subscripts"></a>ES.107: 添字に符号なしを使わないように；`gsl::index` を選ぼう 
 ### <a name="Rper-reason"></a>Per.1: 理由なしに最適化しないように
 
 ### <a name="Rper-Knuth"></a>Per.2: 早すぎる最適化はしないように
@@ -559,14 +560,16 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rconc-raii"></a>CP.20: 単純な `lock()`/un`lock()` は決して使わず、 RAII を使おう
 
-### <a name="Rconc-lock"></a>CP.21: 複数の `mutex`e を取る時は、std 
+### <a name="Rconc-lock"></a>CP.21: 複数の `mutex` を取る時は、`std::lock()` あるいは `std::scoped_lock` を使おう
+
 ### <a name="Rconc-unknown"></a>CP.22: ロックを持っている時は、未知のコード（例えば、コールバック）を決して呼ばないように
 
 ### <a name="Rconc-join"></a>CP.23: join するスレッドは、スコープ内のコンテナとみなそう
 
 ### <a name="Rconc-detach"></a>CP.24: スレッドは、グローバルなコンテナとみなそう
 
-### <a name="Rconc-joining_thread"></a>CP.25: std 
+### <a name="Rconc-joining_thread"></a>CP.25: `std::thread` より、`gsl::joining_thread` を選ぼう
+
 ### <a name="Rconc-detached_thread"></a>CP.26: スレッドを `detach()` しないように
 
 ### <a name="Rconc-data-by-value"></a>CP.31: スレッドに渡す少量のデータは、参照あるいはポインタでなく、値で渡そう
@@ -814,15 +817,20 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rsl-bounds"></a>SL.con.3: 境界エラーを避けよう
 
-### <a name="Rstr-string"></a>SL.str.1: 文字シーケンスを所有するには、std 
-### <a name="Rstr-view"></a>SL.str.2: 文字シーケンスを参照するには、 std 
+### <a name="Rstr-string"></a>SL.str.1: 文字シーケンスを所有するには、`std::string` を使おう
+
+### <a name="Rstr-view"></a>SL.str.2: 文字シーケンスを参照するには、`std::string_view` あるいは `gsl::string_span` を使おう
+
 ### <a name="Rstr-zstring"></a>SL.str.3: C スタイルのゼロ終了する文字シーケンスを参照するには、 `zstring` あるいは c`zstring` を使おう
 
 ### <a name="Rstr-char*"></a>SL.str.4: 単一の文字を参照するには、 `char*` を使おう
 
-### <a name="Rstr-byte"></a>SL.str.5: 必ずしも文字を表さないバイト値を参照するには、 std 
-### <a name="Rstr-locale"></a>SL.str.10: ロケールに敏感な文字列操作をする必要がある時は std 
-### <a name="Rstr-span"></a>SL.str.11: 文字列を変更する必要がある時は、std 
+### <a name="Rstr-byte"></a>SL.str.5: 必ずしも文字を表さないバイト値を参照するには、`std::byte` を使おう
+
+### <a name="Rstr-locale"></a>SL.str.10: ロケールに敏感な文字列操作をする必要がある時は `std::string` を使おう
+
+### <a name="Rstr-span"></a>SL.str.11: 文字列を変更する必要がある時は、`std::string_view` ではなく、`gsl::string_span` を使おう
+
 ### <a name="Rstr-s"></a>SL.str.12: 標準ライブラリの文字列を意味する文字列リテラルには `s` サフィックスを使おう
 
 ### <a name="Rio-low"></a>SL.io.1: 文字レベルの入力は、必要がある時だけ、使おう
@@ -831,7 +839,8 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rio-streams"></a>SL.io.3: I/O には、 `iostream`s を選ぼう
 
-### <a name="Rio-sync"></a>SL.io.10: `printf`-ファミリー関数を使わないなら、 ios_base 
+### <a name="Rio-sync"></a>SL.io.10: `printf`-ファミリー関数を使わないなら、`ios_base::sync_with_stdio(false)` を呼ぼう
+
 ### <a name="Rio-endl"></a>SL.io.50: `endl` は使わないこと
 
 ### <a name="Rclib-jmp"></a>SL.C.1: setjmp/longjmp は使わないように
