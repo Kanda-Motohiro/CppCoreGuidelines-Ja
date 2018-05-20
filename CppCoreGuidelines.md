@@ -93,19 +93,21 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rf-inout"></a>F.17: 「入出力」パラメタは、`const` でない参照で渡そう
 
-### <a name="Rf-consume"></a>F.18: 「move-from する予定」のパラメタは、 `X&&` で渡して、そのパラメタを std 
-### <a name="Rf-forward"></a>F.19: 「forward」パラメタは、 `TP&&` で渡して、そのパラメタには std 
+### <a name="Rf-consume"></a>F.18: 「move-from する予定」のパラメタは、 `X&&` で渡して、そのパラメタを std::move しよう
+
+### <a name="Rf-forward"></a>F.19: 「forward」パラメタは、 `TP&&` で渡して、そのパラメタには std::forward だけをしよう
+
 ### <a name="Rf-out"></a>F.20: 「出力」の出力値は、出力パラメタより、戻り値を選ぼう
 
 ### <a name="Rf-out-multi"></a>F.21: 複数の「出力」値を戻すには、 tuple あるいは struct を選ぼう
 
-### <a name="Rf-ptr"></a>F.22: 一つのオブジェクトを指定するには、 `T*` あるいは `owner<`T*`>` を選ぼう
+### <a name="Rf-ptr"></a>F.22: 一つのオブジェクトを指定するには、 `T*` あるいは `owner<T*>` を選ぼう
 
 ### <a name="Rf-nullptr"></a>F.23: "null" が有効な値でないことを示すには、`not_null<T>` を使おう
 
 ### <a name="Rf-range"></a>F.24: 半開シーケンスを指定するには、`span<T>` あるいは `span_p<T>` を使おう
 
-### <a name="Rf-zstring"></a>F.25: C-スタイル文字列を指定するには、`zstring` あるいは `not_null<`zstring`>` を使おう
+### <a name="Rf-zstring"></a>F.25: C-スタイル文字列を指定するには、`zstring` あるいは `not_null<zstring>` を使おう
 
 ### <a name="Rf-unique_ptr"></a>F.26: ポインタが必要である時、所有権を移動するには、`unique_ptr<T>` を使おう
 
@@ -370,9 +372,9 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rr-smart"></a>R.31: 標準にないスマートポインタを作る時は、 `std` の基本的なパターンに従おう
 
-### <a name="Rr-uniqueptrparam"></a>R.32: `unique_ptr<`widget`>` 引数を取って、関数が `widget` の所有権を前提とすることを表そう
+### <a name="Rr-uniqueptrparam"></a>R.32: `unique_ptr<widget>` 引数を取って、関数が `widget` の所有権を前提とすることを表そう
 
-### <a name="Rr-reseat"></a>R.33: unique_ptr<`widget`>& 引数を取って、関数が `widget` を reseat することを表そう
+### <a name="Rr-reseat"></a>R.33: `unique_ptr<widget>&` 引数を取って、関数が `widget` を reseat することを表そう
 
 ### <a name="Rr-sharedptrparam-owner"></a>R.34: `shared_ptr<widget>` 引数を取って、関数が widget の所有者の一部であることを表そう
 
@@ -416,8 +418,9 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Res-recycle"></a>ES.26: ２つの無関係な目的のために一つの変数を使わないこと
 
-### <a name="Res-stack"></a>ES.27: スタック上の配列は、 std 
-### <a name="Res-lambda-init"></a>ES.28: 複雑な初期化、特に `const` 変数、のためには lambdas を使おう
+### <a name="Res-stack"></a>ES.27: スタック上の配列は、`std::array` あるいは `stack_array` を使おう
+
+### <a name="Res-lambda-init"></a>ES.28: 複雑な初期化、特に `const` 変数、のためにはラムダを使おう
 
 ### <a name="Res-macros"></a>ES.30: プログラムテキストを操作するためにマクロを使わないように
 
@@ -558,7 +561,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rconc-tools"></a>CP.9: 可能な時は必ず、ツールを使ってあなたの並列コードを検証しよう
 
-### <a name="Rconc-raii"></a>CP.20: 単純な `lock()`/un`lock()` は決して使わず、 RAII を使おう
+### <a name="Rconc-raii"></a>CP.20: 単純な `lock()/unlock()` は決して使わず、 RAII を使おう
 
 ### <a name="Rconc-lock"></a>CP.21: 複数の `mutex` を取る時は、`std::lock()` あるいは `std::scoped_lock` を使おう
 
@@ -635,7 +638,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Re-not-always"></a>E.17: 全ての関数で全ての例外を捕捉しようと試みないように
 
-### <a name="Re-catch"></a>E.18: 明示的な `try`/`catch` の使用は最小にしよう
+### <a name="Re-catch"></a>E.18: 明示的な `try/catch` の使用は最小にしよう
 
 ### <a name="Re-finally"></a>E.19: 適切な資源ハンドルが得られない時は、 `final_action` オブジェクトを使って、後始末を表そう
 
@@ -793,7 +796,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rs-cycles"></a>SF.9: ソースファイル間の循環依存を避けよう
 
-### <a name="Rs-implicit"></a>SF.10: 暗黙的に `#include`d された名前への依存を避けよう
+### <a name="Rs-implicit"></a>SF.10: 暗黙的に `#include` された名前への依存を避けよう
 
 ### <a name="Rs-contained"></a>SF.11: ヘッダフィルは自己完結しているべきです
 
@@ -829,7 +832,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rstr-locale"></a>SL.str.10: ロケールに敏感な文字列操作をする必要がある時は `std::string` を使おう
 
-### <a name="Rstr-span"></a>SL.str.11: 文字列を変更する必要がある時は、`std::string_view` ではなく、`gsl::string_span` を使おう
+### <a name="Rstr-span"></a>SL.str.11: 文字列を変更する必要がある時は、`std::string_view` でなく、`gsl::string_span` を使おう
 
 ### <a name="Rstr-s"></a>SL.str.12: 標準ライブラリの文字列を意味する文字列リテラルには `s` サフィックスを使おう
 
@@ -837,13 +840,13 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rio-validate"></a>SL.io.2: 読む時は、常に誤った形式の入力を考慮しよう
 
-### <a name="Rio-streams"></a>SL.io.3: I/O には、 `iostream`s を選ぼう
+### <a name="Rio-streams"></a>SL.io.3: I/O には、 `iostream` を選ぼう
 
 ### <a name="Rio-sync"></a>SL.io.10: `printf`-ファミリー関数を使わないなら、`ios_base::sync_with_stdio(false)` を呼ぼう
 
 ### <a name="Rio-endl"></a>SL.io.50: `endl` は使わないこと
 
-### <a name="Rclib-jmp"></a>SL.C.1: setjmp/longjmp は使わないように
+### <a name="Rclib-jmp"></a>SL.C.1: setjmp/longjmp は使わないこと
 
 ### <a name="Ra-stable"></a>A.1: コードの安定した部分をあまりそうでない部分と分離しよう
 
