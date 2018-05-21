@@ -49,11 +49,11 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Ri-except"></a>I.10: 要求される仕事を実行できないことを伝えるには、例外を使おう
 
-### <a name="Ri-raw"></a>I.11: 決して、生のポインタ(`T*`)や参照(`T&`)で、所有権を移動してはいけません
+### <a name="Ri-raw"></a>I.11: 決して、生のポインタ(`T*`)や参照(`T&`)で、所有権を移動しないこと
 
 ### <a name="Ri-nullptr"></a>I.12: ヌルであってはいけないポインタは、`not_null` と宣言しよう
 
-### <a name="Ri-array"></a>I.13: 配列を一つのポインタで渡してはいけません
+### <a name="Ri-array"></a>I.13: 配列を一つのポインタで渡さないこと
 
 ### <a name="Ri-global-init"></a>I.22: グローバルなオブジェクトの複雑な初期化を避けよう
 
@@ -79,7 +79,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rf-inline"></a>F.5: 関数がとても小さく、実行時間が重要なら、`inline` と宣言しよう
 
-### <a name="Rf-noexcept"></a>F.6: もしあなたの関数が例外を投げないなら、 `noexcept` と宣言しよう
+### <a name="Rf-noexcept"></a>F.6: 関数が例外を投げないなら、 `noexcept` と宣言しよう
 
 ### <a name="Rf-smart"></a>F.7: 一般的な用途には、スマートポインタでなく、 `T*` あるいは `T&` 引数を取ろう
 
@@ -117,19 +117,19 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rf-return-ptr"></a>F.42: 位置を指定するには、`T*` を返そう（その時に限り）
 
-### <a name="Rf-dangle"></a>F.43: ローカルオブジェクトへのポインタあるいは参照は決して（直接、間接を問わす）返してはいけません
+### <a name="Rf-dangle"></a>F.43: ローカルオブジェクトへのポインタあるいは参照は決して（直接、間接を問わす）返さないこと
 
 ### <a name="Rf-return-ref"></a>F.44: コピーが不適切で「オブジェクトを何も返さない」ことを必要としないなら、`T&` を返そう
 
-### <a name="Rf-return-ref-ref"></a>F.45: `T&&` を返してはいけません
+### <a name="Rf-return-ref-ref"></a>F.45: `T&&` を返さないこと
 
 ### <a name="Rf-main"></a>F.46: `main()` の戻り値は、 `int` です
 
 ### <a name="Rf-assignment-op"></a>F.47: 代入演算子からは `T&` を返そう
 
-### <a name="Rf-capture-vs-overload"></a>F.50: 関数がうまく仕事ができないとき（ローカル変数を補足する、ローカル関数を書く）は、ラムダを使おう
+### <a name="Rf-capture-vs-overload"></a>F.50: 関数ではうまく仕事ができないとき（ローカル変数を補足する、ローカル関数を書く）は、ラムダを使おう
 
-### <a name="Rf-default-args"></a>F.51: 選択が可能なら、オーバーロードよりデフォルト引数を選ぼう
+### <a name="Rf-default-args"></a>F.51: 選択が可能なら、多重定義よりデフォルト引数を選ぼう
 
 ### <a name="Rf-reference-capture"></a>F.52: ローカルに使われるラムダでは、アルゴリズムに渡される変数も含めて、参照で変数を捕捉するようにしよう
 
@@ -137,7 +137,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rf-this-capture"></a>F.54: `this` を捕捉するなら、明示的に全ての変数を捕捉しよう（デフォルト補足はなし）
 
-### <a name="F-varargs"></a>F.55: `va_arg` 引数を使ってはいけません
+### <a name="F-varargs"></a>F.55: `va_arg` 引数を使わないこと
 
 ### <a name="Rc-org"></a>C.1: 関連するデータは構造にまとめよう (構造体あるいはクラス)
 
@@ -175,7 +175,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rc-dtor-virtual"></a>C.35: 基底クラスのデストラクタは、 public かつ virtual であるか、protected かつ virtual でないかのいずれかであるべきです
 
-### <a name="Rc-dtor-fail"></a>C.36: デストラクタは失敗してはいけません
+### <a name="Rc-dtor-fail"></a>C.36: デストラクタは失敗しないこと
 
 ### <a name="Rc-dtor-noexcept"></a>C.37: デストラクタは `noexcept` にしよう
 
@@ -189,7 +189,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rc-default00"></a>C.44: デフォルトコンストラクタは、単純で例外を投げないことしよう
 
-### <a name="Rc-default"></a>C.45: データメンバを初期化するだけのデフォルトコンストラクタを定義してはいけません；クラス内メンバ初期化子をその代わりに使おう
+### <a name="Rc-default"></a>C.45: データメンバを初期化するだけのデフォルトコンストラクタを定義しないこと；クラス内メンバ初期化子をその代わりに使おう
 
 ### <a name="Rc-explicit"></a>C.46: デフォルトで、一つの引数を取るコンストラクタは explicit と宣言しよう
 
@@ -225,11 +225,11 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rc-delete"></a>C.81: デフォルトのふるまいを無効にしたい（代替策が不要で）なら `=delete` を使おう
 
-### <a name="Rc-ctor-virtual"></a>C.82: コンストラクタとデストラクタで仮想関数を呼んではいけません
+### <a name="Rc-ctor-virtual"></a>C.82: コンストラクタとデストラクタで仮想関数を呼ばないこと
 
 ### <a name="Rc-swap"></a>C.83: 値型のような型では、 `noexcept` swap 関数を提供することを考慮しよう
 
-### <a name="Rc-swap-fail"></a>C.84: `swap` 関数は失敗してはいけません
+### <a name="Rc-swap-fail"></a>C.84: `swap` 関数は失敗しないこと
 
 ### <a name="Rc-swap-noexcept"></a>C.85: `swap` は `noexcept` にしよう
 
@@ -245,7 +245,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rh-separation"></a>C.122: インタフェースと実装の完全な分離が必要な時は、抽象クラスをインタフェースとして使おう
 
-### <a name="Rh-abstract-ctor"></a>C.126: 抽象クラスをは典型的にはコンストラクタがいりません
+### <a name="Rh-abstract-ctor"></a>C.126: 抽象クラスは典型的にはコンストラクタがいりません
 
 ### <a name="Rh-dtor"></a>C.127: 仮想関数を持つクラスは、virtual あるいは protected デストラクタを持つべきです
 
@@ -287,13 +287,13 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rh-make_shared"></a>C.151: `shared_ptr` が所有するオブジェクトを作成するために `make_shared()` を使おう
 
-### <a name="Rh-array"></a>C.152: 決して、派生クラスのオブジェクトの配列へのポインタを、その基底へのポインタに代入してはいけません
+### <a name="Rh-array"></a>C.152: 決して、派生クラスのオブジェクトの配列へのポインタを、その基底へのポインタに代入しないこと
 
 ### <a name="Rh-use-virtual"></a>C.153: キャストより仮想関数を選ぼう
 
 ### <a name="Ro-conventional"></a>C.160: 演算子は、主に、一般的な使い方をまねるために定義しよう
 
-### <a name="Ro-symmetric"></a>C.161: 対称的な操作のため、メンバーでない関数を使おう
+### <a name="Ro-symmetric"></a>C.161: 対称的な操作のため、メンバでない関数を使おう
 
 ### <a name="Ro-equivalent"></a>C.162: ほぼ等しい操作は多重定義しよう
 
@@ -309,7 +309,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Ro-namespace"></a>C.168: 多重定義する演算子は、そのオペランドの名前空間で定義しよう
 
-### <a name="Ro-lambda"></a>C.170: ラムダを多重定義したいときは、 generic lambda を使おう
+### <a name="Ro-lambda"></a>C.170: ラムダを多重定義したいときは、汎用的なラムダを使おう
 
 ### <a name="Ru-union"></a>C.180: メモリを節約するために `union` を使おう
 
@@ -367,10 +367,11 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rr-make_unique"></a>R.23: `unique_ptr` は `make_unique()` で作ろう
 
-### <a name="Rr-weak_ptr"></a>R.24: `shared_ptr` の循環を断ち切るには std 
+### <a name="Rr-weak_ptr"></a>R.24: `shared_ptr` の循環を断ち切るために、`std::weak_ptr` を使おう
+
 ### <a name="Rr-smartptrparam"></a>R.30: 引数にスマートポインタを取るのは明示的に存在期間セマンティクスを表す必要のある時だけにしよう
 
-### <a name="Rr-smart"></a>R.31: 標準にないスマートポインタを作る時は、 `std` の基本的なパターンに従おう
+### <a name="Rr-smart"></a>R.31: 標準にないスマートポインタを使う時は、 `std` の基本的なパターンに従おう
 
 ### <a name="Rr-uniqueptrparam"></a>R.32: `unique_ptr<widget>` 引数を取って、関数が `widget` の所有権を前提とすることを表そう
 
@@ -414,7 +415,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Res-unique"></a>ES.24: ポインタを持つには `unique_ptr<T>` を使おう
 
-### <a name="Res-const"></a>ES.25: 後で値を変更したいと思わないなら、オブジェクトは `const` あるいは `const expr` と宣言しよう
+### <a name="Res-const"></a>ES.25: 後で値を変更したいと思わないなら、オブジェクトは `const` あるいは `constexpr` と宣言しよう
 
 ### <a name="Res-recycle"></a>ES.26: ２つの無関係な目的のために一つの変数を使わないこと
 
@@ -440,7 +441,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Res-order"></a>ES.43: 評価の順序が未定義となる式を避けよう
 
-### <a name="Res-order-fct"></a>ES.44: 関数引数の評価の順序に依存してはいけません
+### <a name="Res-order-fct"></a>ES.44: 関数引数の評価の順序に依存しないこと
 
 ### <a name="Res-magic"></a>ES.45: 「マジック定数」を避けよう；シンボリック定数を使おう
 
@@ -543,13 +544,13 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rper-struct"></a>Per.17: 時間にクリティカルな構造体では最も使われるメンバを先頭に宣言しよう
 
-### <a name="Rper-space"></a>Per.18: 空間は時間です
+### <a name="Rper-space"></a>Per.18: 領域は時間です
 
 ### <a name="Rper-access"></a>Per.19: 予測可能なようにメモリアクセスをしよう
 
 ### <a name="Rper-context"></a>Per.30: クリティカルなパスではコンテキストスイッチを避けよう
 
-### <a name="Rconc-multi"></a>CP.1: あなたのコードがマルチスレッドプログラムの一部として実行するかもしれないことを前提としよう
+### <a name="Rconc-multi"></a>CP.1: コードがマルチスレッドプログラムの一部として実行するかもしれないことを前提としよう
 
 ### <a name="Rconc-races"></a>CP.2: データ競合を避けよう
 
@@ -634,7 +635,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Re-exception-ref"></a>E.15: 階層からの例外は参照で捕捉しよう
 
-### <a name="Re-never-fail"></a>E.16: デストラクタ、解放、 `swap` は決して失敗してはいけません
+### <a name="Re-never-fail"></a>E.16: デストラクタ、解放、 `swap` は決して失敗しないこと
 
 ### <a name="Re-not-always"></a>E.17: 全ての関数で全ての例外を捕捉しようと試みないこと
 
@@ -688,7 +689,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rt-axiom"></a>T.22: コンセプトに公理を指定しよう
 
-### <a name="Rt-refine"></a>T.23: 詳細化したコンセプトをそのより一般的な場合とくべるするために、新しい使用パターンを加えよう
+### <a name="Rt-refine"></a>T.23: 詳細化したコンセプトをそのより一般的な場合と区別するために、新しい使用パターンを加えよう
 
 ### <a name="Rt-tag"></a>T.24: セマンティクスだけが違うコンセプトを区別するために tag classe あるいは trait を使おう
 
@@ -780,9 +781,9 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rs-file-suffix"></a>SF.1: あなたのプロジェクトが既に他の慣例に従っていないなら、コードファイルには `.cpp` サフィックスを、インタフェースファイルに `.h` を使おう
 
-### <a name="Rs-inline"></a>SF.2: `.h` ファイルはオブジェクトの定義やインラインでない関数定義を含んではいけません
+### <a name="Rs-inline"></a>SF.2: `.h` ファイルはオブジェクトの定義やインラインでない関数定義を含まないこと
 
-### <a name="Rs-declaration-header"></a>SF.3: 複数のソースファイルで使われる全ての宣言はのために `.h` ファイルを使おう
+### <a name="Rs-declaration-header"></a>SF.3: 複数のソースファイルで使われる全ての宣言のために `.h` ファイルを使おう
 
 ### <a name="Rs-include-order"></a>SF.4: ファイル内で他の宣言の前に `.h` ファイルをインクルードしよう
 
@@ -790,7 +791,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rs-using"></a>SF.6: `using namespace` 指令は、移行のため、基本的なライブラリ (`std` のような)のため、あるいは、ローカルスコープ内（その時に限り）で使おう
 
-### <a name="Rs-using-directive"></a>SF.7: ヘッダフィル内のグローバルスコープで、 `using namespace` を書いてはいけません
+### <a name="Rs-using-directive"></a>SF.7: ヘッダフィル内のグローバルスコープで、 `using namespace` を書かないこと
 
 ### <a name="Rs-guards"></a>SF.8: 全ての  `.h` ファイルで、`#include` ガードを使おう
 
@@ -862,7 +863,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rnr-lots-of-files"></a>NR.4: ダメ：クラスの宣言はそれぞれ独自のソースファイルに置こう
 
-### <a name="Rnr-two-phase-init"></a>NR.5: ダメ：コンストラクタでたくさんの作業をしてはいけません；その代わり、２相の初期化を使おう
+### <a name="Rnr-two-phase-init"></a>NR.5: ダメ：コンストラクタでたくさんの作業をしないこと；その代わり、２相の初期化を使おう
 
 ### <a name="Rnr-goto-exit"></a>NR.6: ダメ：関数の終わりに全ての後始末アクションを置いて、goto で抜けよう
 
