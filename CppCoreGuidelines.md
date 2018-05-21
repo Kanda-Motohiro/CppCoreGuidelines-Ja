@@ -187,7 +187,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rc-default0"></a>C.43: コピー可能な (値型の) クラスはデフォルトコンストラクタを持つことを保証しよう
 
-### <a name="Rc-default00"></a>C.44: デフォルトコンストラクタは、単純で例外を投げないようにしよう
+### <a name="Rc-default00"></a>C.44: デフォルトコンストラクタは、単純で例外を投げないことしよう
 
 ### <a name="Rc-default"></a>C.45: データメンバを初期化するだけのデフォルトコンストラクタを定義してはいけません；クラス内メンバ初期化子をその代わりに使おう
 
@@ -402,13 +402,13 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Res-auto"></a>ES.11: 型名の冗長な繰り返しを避けるため `auto` を使おう
 
-### <a name="Res-reuse"></a>ES.12: ネストしたスコープ内で名前を再使用しないように
+### <a name="Res-reuse"></a>ES.12: ネストしたスコープ内で名前を再使用しないこと
 
 ### <a name="Res-always"></a>ES.20: オブジェクトは常に初期化しよう
 
-### <a name="Res-introduce"></a>ES.21: 使う必要が起きる前に変数（あるいは定数）を導入しないように
+### <a name="Res-introduce"></a>ES.21: 使う必要が起きる前に変数（あるいは定数）を導入しないこと
 
-### <a name="Res-init"></a>ES.22: 変数を初期化する値を得る前に変数を宣言しないように
+### <a name="Res-init"></a>ES.22: 変数を初期化する値を得る前に変数を宣言しないこと
 
 ### <a name="Res-list"></a>ES.23: `{}` 初期化子シンタックスを選ぼう
 
@@ -422,15 +422,15 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Res-lambda-init"></a>ES.28: 複雑な初期化、特に `const` 変数、のためにはラムダを使おう
 
-### <a name="Res-macros"></a>ES.30: プログラムテキストを操作するためにマクロを使わないように
+### <a name="Res-macros"></a>ES.30: プログラムテキストを操作するためにマクロを使わないこと
 
-### <a name="Res-macros2"></a>ES.31: 定数や「関数」のためにマクロを使わないように
+### <a name="Res-macros2"></a>ES.31: 定数や「関数」のためにマクロを使わないこと
 
 ### <a name="Res-ALL_CAPS"></a>ES.32: マクロ名には `ALL_CAPS` 、全て大文字、を使おう
 
 ### <a name="Res-MACROS"></a>ES.33: マクロを使わなくてはいけない時は、一意の名前をつけよう
 
-### <a name="Res-ellipses"></a> ES.34: (C-スタイルの) 可変引数関数を定義しないように
+### <a name="Res-ellipses"></a> ES.34: (C-スタイルの) 可変引数関数を定義しないこと
 
 ### <a name="Res-complicated"></a>ES.40: 複雑な式を避けよう
 
@@ -452,7 +452,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Res-casts-named"></a>ES.49: キャストをしなくてはいけない時は、名前のあるキャストを使おう
 
-### <a name="Res-casts-const"></a>ES.50: `const` をキャストして取り除かないように
+### <a name="Res-casts-const"></a>ES.50: `const` をキャストして取り除かないこと
 
 ### <a name="Res-range-checking"></a>ES.55: 範囲チェックの必要性を避けよう
 
@@ -462,13 +462,13 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Res-del"></a>ES.61: 配列は `delete[]` で削除し、配列でないものは `delete` で削除しよう
 
-### <a name="Res-arr2"></a>ES.62: 異なる配列の間で、ポインタの比較をしないように
+### <a name="Res-arr2"></a>ES.62: 異なる配列の間で、ポインタの比較をしないこと
 
-### <a name="Res-slice"></a>ES.63: スライスしないように
+### <a name="Res-slice"></a>ES.63: スライスしないこと
 
 ### <a name="Res-construct"></a>ES.64: コンストラクタは `T{e}` ノーテーションを使おう
 
-### <a name="Res-deref"></a>ES.65: 不正なポインタを参照外ししないように
+### <a name="Res-deref"></a>ES.65: 不正なポインタを参照外ししないこと
 
 ### <a name="Res-switch-if"></a>ES.70: 選択の余地があるなら、 `if` 文より `switch` 文を選ぼう
 
@@ -490,40 +490,40 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Res-default"></a>ES.79: 一般的な場合を扱うために（その時に限り） `default` を使おう
 
-### <a name="Res-noname"></a>ES.84: 名前のないローカル変数を宣言し（ようと試み）ないように
+### <a name="Res-noname"></a>ES.84: 名前のないローカル変数を宣言し（ようと試み）ないこと
 
 ### <a name="Res-empty"></a>ES.85: 空の文は目立つようにしよう
 
 ### <a name="Res-loop-counter"></a>ES.86: 生の for ループの本体内で、ループ制御変数を変更するのは避けよう
 
-### <a name="Res-if"></a>ES.87: 条件に冗長な `==` あるいは `!=` をつけないように
+### <a name="Res-if"></a>ES.87: 条件に冗長な `==` あるいは `!=` をつけないこと
 
-### <a name="Res-mix"></a>ES.100: 符号ありと符号なしの算術を混ぜないように
+### <a name="Res-mix"></a>ES.100: 符号ありと符号なしの算術を混ぜないこと
 
 ### <a name="Res-unsigned"></a>ES.101: ビット操作には符号なしの型を使おう
 
 ### <a name="Res-signed"></a>ES.102: 算術には符号ありの型を使おう
 
-### <a name="Res-overflow"></a>ES.103: オーバーフローしないように
+### <a name="Res-overflow"></a>ES.103: オーバーフローしないこと
 
-### <a name="Res-underflow"></a>ES.104: アンダーフローしないように
+### <a name="Res-underflow"></a>ES.104: アンダーフローしないこと
 
-### <a name="Res-zero"></a>ES.105: ゼロで割り算をしないように
+### <a name="Res-zero"></a>ES.105: ゼロで割り算をしないこと
 
 ### <a name="Res-nonnegative"></a>ES.106: 符号なしを使うことで、負数を避けようとしないこと
 
-### <a name="Res-subscripts"></a>ES.107: 添字に符号なしを使わないように；`gsl::index` を選ぼう 
-### <a name="Rper-reason"></a>Per.1: 理由なしに最適化しないように
+### <a name="Res-subscripts"></a>ES.107: 添字に符号なしを使わないこと；`gsl::index` を選ぼう 
+### <a name="Rper-reason"></a>Per.1: 理由なしに最適化しないこと
 
-### <a name="Rper-Knuth"></a>Per.2: 早すぎる最適化はしないように
+### <a name="Rper-Knuth"></a>Per.2: 早すぎる最適化はしないこと
 
-### <a name="Rper-critical"></a>Per.3: 性能にクリティカルでないものを最適化しないように
+### <a name="Rper-critical"></a>Per.3: 性能にクリティカルでないものを最適化しないこと
 
-### <a name="Rper-simple"></a>Per.4: 複雑なコードは単純なコードに比べて必然的に速いと思わないように
+### <a name="Rper-simple"></a>Per.4: 複雑なコードは単純なコードに比べて必然的に速いと思わないこと
 
-### <a name="Rper-low"></a>Per.5: 低レベルのコードは高レベルのコードに比べて必然的に速いと思わないように
+### <a name="Rper-low"></a>Per.5: 低レベルのコードは高レベルのコードに比べて必然的に速いと思わないこと
 
-### <a name="Rper-measure"></a>Per.6: 測定しないで性能を論じないように
+### <a name="Rper-measure"></a>Per.6: 測定しないで性能を論じないこと
 
 ### <a name="Rper-efficiency"></a>Per.7: 最適化を可能とするように設計しよう
 
@@ -537,7 +537,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rper-alloc"></a>Per.14: 確保と解放の数を最小にしよう
 
-### <a name="Rper-alloc0"></a>Per.15: クリティカルな箇所では確保しないように
+### <a name="Rper-alloc0"></a>Per.15: クリティカルな箇所では確保しないこと
 
 ### <a name="Rper-compact"></a>Per.16: コンパクトなデータ構造を使おう
 
@@ -557,7 +557,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rconc-task"></a>CP.4: スレッドでなく、タスクの言葉で考えよう
 
-### <a name="Rconc-volatile"></a>CP.8: 同期のために `volatile` を使わないように
+### <a name="Rconc-volatile"></a>CP.8: 同期のために `volatile` を使わないこと
 
 ### <a name="Rconc-tools"></a>CP.9: 可能な時は必ず、ツールを使ってあなたの並列コードを検証しよう
 
@@ -565,7 +565,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rconc-lock"></a>CP.21: 複数の `mutex` を取る時は、`std::lock()` あるいは `std::scoped_lock` を使おう
 
-### <a name="Rconc-unknown"></a>CP.22: ロックを持っている時は、未知のコード（例えば、コールバック）を決して呼ばないように
+### <a name="Rconc-unknown"></a>CP.22: ロックを持っている時は、未知のコード（例えば、コールバック）を決して呼ばないこと
 
 ### <a name="Rconc-join"></a>CP.23: join するスレッドは、スコープ内のコンテナとみなそう
 
@@ -573,7 +573,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rconc-joining_thread"></a>CP.25: `std::thread` より、`gsl::joining_thread` を選ぼう
 
-### <a name="Rconc-detached_thread"></a>CP.26: スレッドを `detach()` しないように
+### <a name="Rconc-detached_thread"></a>CP.26: スレッドを `detach()` しないこと
 
 ### <a name="Rconc-data-by-value"></a>CP.31: スレッドに渡す少量のデータは、参照あるいはポインタでなく、値で渡そう
 
@@ -583,11 +583,11 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rconc-create"></a>CP.41: スレッド作成と破壊を最小にしよう
 
-### <a name="Rconc-wait"></a>CP.42: 条件無しで `wait` しないように
+### <a name="Rconc-wait"></a>CP.42: 条件無しで `wait` しないこと
 
 ### <a name="Rconc-time"></a>CP.43: クリティカルセクション内で使う時間は最小にしよう
 
-### <a name="Rconc-name"></a>CP.44: `lock_guard` と `unique_lock` には名前をつけるのを忘れないように
+### <a name="Rconc-name"></a>CP.44: `lock_guard` と `unique_lock` には名前をつけるのを忘れないこと
 
 ### <a name="Rconc-mutex"></a>CP.50: `mutex` はそれが守るデータと一緒に定義しよう。可能なら、 `synchronized_value<T>` を使おう
 
@@ -595,13 +595,13 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rconc-async"></a>CP.61: 並列タスクを起動するには、 `async()` を使おう
 
-### <a name="Rconc-lockfree"></a>CP.100: 絶対に必要でない限り、ロックフリープログラミングを使わないように
+### <a name="Rconc-lockfree"></a>CP.100: 絶対に必要でない限り、ロックフリープログラミングを使わないこと
 
 ### <a name="Rconc-distrust"></a>CP.101: あなたのハードウェアとコンパイラの組み合わせを疑おう
 
 ### <a name="Rconc-literature"></a>CP.102: 注意深く論文を勉強しよう
 
-### <a name="Rconc-double"></a>CP.110: 初期化のために、ダブルチェックするロックを自分で書かないように
+### <a name="Rconc-double"></a>CP.110: 初期化のために、ダブルチェックするロックを自分で書かないこと
 
 ### <a name="Rconc-double-pattern"></a>CP.111: 本当にダブルチェックするロックが必要な時は、慣用的なパターンを使おう
 
@@ -628,7 +628,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 ### <a name="Re-noexcept"></a>E.12: 例外を投げることがありえないあるいは許容できない時は `noexcept` を使おう
 訳注。原文の exiting function わからない。
 
-### <a name="Re-never-throw"></a>E.13: オブジェクトの直接の所有者である時は決して例外を投げないように
+### <a name="Re-never-throw"></a>E.13: オブジェクトの直接の所有者である時は決して例外を投げないこと
 
 ### <a name="Re-exception-types"></a>E.14: 例外の型は、目的のために設計されたユーザ定義型（ビルトイン型でなく）を使おう
 
@@ -636,7 +636,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Re-never-fail"></a>E.16: デストラクタ、解放、 `swap` は決して失敗してはいけません
 
-### <a name="Re-not-always"></a>E.17: 全ての関数で全ての例外を捕捉しようと試みないように
+### <a name="Re-not-always"></a>E.17: 全ての関数で全ての例外を捕捉しようと試みないこと
 
 ### <a name="Re-catch"></a>E.18: 明示的な `try/catch` の使用は最小にしよう
 
@@ -650,7 +650,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Re-no-throw"></a>E.28: グローバル状態（例えば `errno`）を基本とするエラー処理を避けよう
 
-### <a name="Re-specifications"></a>E.30: exception specification は使わないように
+### <a name="Re-specifications"></a>E.30: exception specification は使わないこと
 
 ### <a name="Re_catch"></a>E.31: `catch` 節は正しい順序にしよう
 
@@ -716,7 +716,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rt-depend"></a>T.60: テンプレートのコンテキスト依存を最小にしよう
 
-### <a name="Rt-scary"></a>T.61: メンバをパラメタ化しすぎないように(ひどい)
+### <a name="Rt-scary"></a>T.61: メンバをパラメタ化しすぎないこと(ひどい)
 
 ### <a name="Rt-nondependent"></a>T.62: 依存しないクラステンプレートメンバをテンプレート化されていない基底クラスに置こう
 
@@ -728,15 +728,15 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rt-cast"></a>T.68: テンプレート内では、 `()` でなく `{}` を使って、あいまいさを避けよう
 
-### <a name="Rt-customization"></a>T.69: テンプレート内では、それを customization point とする意図がない限り、修飾されない非メンバ関数呼び出しをしないように
+### <a name="Rt-customization"></a>T.69: テンプレート内では、それを customization point とする意図がない限り、修飾されない非メンバ関数呼び出しをしないこと
 
-### <a name="Rt-hier"></a>T.80: クラス階層をナイーブにテンプレートとしないように
+### <a name="Rt-hier"></a>T.80: クラス階層をナイーブにテンプレートとしないこと
 
-### <a name="Rt-array"></a>T.81: 階層と配列を混ぜないように
+### <a name="Rt-array"></a>T.81: 階層と配列を混ぜないこと
 
 ### <a name="Rt-linear"></a>T.82: 仮想関数が不適切な場合、階層を linearize しよう
 
-### <a name="Rt-virtual"></a>T.83: メンバ関数テンプレートを virtual と宣言しないように
+### <a name="Rt-virtual"></a>T.83: メンバ関数テンプレートを virtual と宣言しないこと
 
 ### <a name="Rt-abi"></a>T.84: ABI が安定したインタフェースを提供するために、テンプレート化されないコア実装を使おう
 
@@ -746,7 +746,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rt-variadic-process"></a>T.102: 可変引数テンプレートへの引数をどのように処理するか
 
-### <a name="Rt-variadic-not"></a>T.103: 均質な引数リストには、可変引数テンプレートを使わないように
+### <a name="Rt-variadic-not"></a>T.103: 均質な引数リストには、可変引数テンプレートを使わないこと
 
 ### <a name="Rt-metameta"></a>T.120: 本当に必要な時に限り、テンプレートメタプログラミングを使おう
 
@@ -766,9 +766,9 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rt-var"></a>T.142?: ノーテーションを単純にするためにテンプレート変数を使おう
 
-### <a name="Rt-nongeneric"></a>T.143: 意図しないで、汎用的でないコードを書かないように
+### <a name="Rt-nongeneric"></a>T.143: 意図しないで、汎用的でないコードを書かないこと
 
-### <a name="Rt-specialize-function"></a>T.144: 関数テンプレートを特殊化しないように
+### <a name="Rt-specialize-function"></a>T.144: 関数テンプレートを特殊化しないこと
 
 ### <a name="Rt-check-class"></a>T.150: `static_assert` を使って、クラスがコンセプトにあっているか確認しよう
 
@@ -802,7 +802,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rs-namespace"></a>SF.20: 論理的構造を表すために名前空間を使おう
 
-### <a name="Rs-unnamed"></a>SF.21: ヘッダでは名前無し (anonymous) 名前空間を使わないように
+### <a name="Rs-unnamed"></a>SF.21: ヘッダでは名前無し (anonymous) 名前空間を使わないこと
 
 ### <a name="Rs-unnamed2"></a>SF.22: 全ての内部的／エクスポートされない要素のために、名前無し (anonymous) 名前空間を使おう
 
@@ -858,7 +858,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rnr-single-return"></a>NR.2: ダメ：関数には一つだけの `return` 文があるべきです
 
-### <a name="Rnr-no-exceptions"></a>NR.3: ダメ：例外を使わないように
+### <a name="Rnr-no-exceptions"></a>NR.3: ダメ：例外を使わないこと
 
 ### <a name="Rnr-lots-of-files"></a>NR.4: ダメ：クラスの宣言はそれぞれ独自のソースファイルに置こう
 
@@ -868,7 +868,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rnr-protected-data"></a>NR.7: ダメ： 全てのデータメンバを `protected` にしよう
 
-### <a name="Rl-comments"></a>NL.1: コードで明確に書けることをコメントで言わないように
+### <a name="Rl-comments"></a>NL.1: コードで明確に書けることをコメントで言わないこと
 
 ### <a name="Rl-comments-intent"></a>NL.2: コメントでは意図を書こう
 
@@ -876,7 +876,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rl-indent"></a>NL.4: 一貫したインデントスタイルを保とう
 
-### <a name="Rl-name-type"></a>NL.5: 名前に型情報をエンコードしないように
+### <a name="Rl-name-type"></a>NL.5: 名前に型情報をエンコードしないこと
 
 ### <a name="Rl-name-length"></a>NL.7: 名前の長さは、ほぼ、そのスコープの長さと比例させよう
 
@@ -898,11 +898,11 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rl-misread"></a>NL.19: 読み間違いをしやすい名前を避けよう
 
-### <a name="Rl-stmt"></a>NL.20: 同じ行に２つの文を置かないように
+### <a name="Rl-stmt"></a>NL.20: 同じ行に２つの文を置かないこと
 
 ### <a name="Rl-dcl"></a>NL.21: 一つの宣言には、一つの名前（だけ）を宣言しよう
 
-### <a name="Rl-void"></a>NL.25: `void` は引数型に使わないように
+### <a name="Rl-void"></a>NL.25: `void` は引数型に使わないこと
 
 ### <a name="Rl-const"></a>NL.26: 慣用的な `const` ノーテーションを使おう
 
