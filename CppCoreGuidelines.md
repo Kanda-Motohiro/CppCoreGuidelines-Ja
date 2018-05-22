@@ -163,6 +163,97 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rc-five"></a>C.21: デフォルト操作のどれか一つでも、定義あるいは `=delete` するなら、全てを定義あるいは `=delete` しよう
 
+##### 理由
+
+*特別なメンバ関数* とは、デフォルトコンストラクタ、コピーコンストラクタ、
+コピー代入演算子、ムーブコンストラクタ、ムーブ代入演算子、そしてデストラクタです。
+
+これら特別な関数のセマンティクスは緊密に関係しています。なので、一つが宣言される必要があるならば、
+他のものも考慮が必要なことが多いでしょう。
+
+デフォルトコンストラクタ以外の特別なメンバ関数を一つでも宣言すると、それが `=default` あるいは `=delete` 
+であっても、ムーブコンストラクタとムーブ代入演算子の暗黙的な生成を抑止します。
+
+ムーブコンストラクタあるいはムーブ代入演算子を宣言すると、それが `=default` あるいは `=delete` 
+であっても、暗黙的に生成されたコピーコンストラクタあるいは暗黙的に生成されたコピー代入演算子
+を delete されたものとして定義することになります。
+
+なので、これら特別な関数の一つでも宣言したら、他も全て宣言するべきです。そうしないと、
+全ての潜在的なムーブをより高価なコピーに変えるとか、クラスをムーブオンリイにするなどの
+期待されない効果を生むことになります。
+
+##### Example, bad
+
+    struct M2 {   // bad: incomplete set of default operations
+    public:
+        // ...
+        // ... no copy or move operations ...
+        ~M2() { delete[] rep; }
+    private:
+        pair<int, int>* rep;  // zero-terminated set of pairs
+    };
+
+    void use()
+    {
+        M2 x;
+        M2 y;
+        // ...
+        x = y;   // the default assignment
+        // ...
+    }
+
+デストラクタで「特別の注意」が必要（ここでは、解放）が必要であったことを考えると、コピーとムーブ代入（どちらも暗黙的にオブジェクトを破壊します）が正しい可能性は小さいです（ここでは、二重削除になります）。
+
+##### 注意
+
+これは、"the rule of five" あるいは "the rule of six" として知られています。デフォルトコンストラクタを数えるかどうかによります。
+
+##### 注意
+
+If you want a default implementation of a default operation (while defining another), write `=default` to show you're doing so intentionally for that function.
+If you don't want a default operation, suppress it with `=delete`.
+
+##### Example, good
+
+When a destructor needs to be declared just to make it `virtual`, it can be
+defined as defaulted. To avoid suppressing the implicit move operations
+they must also be declared, and then to avoid the class becoming move-only
+(and not copyable) the copy operations must be declared:
+
+    class AbstractBase {
+    public:
+      virtual ~AbstractBase() = default;
+      AbstractBase(const AbstractBase&) = default;
+      AbstractBase& operator=(const AbstractBase&) = default;
+      AbstractBase(AbstractBase&&) = default;
+      AbstractBase& operator=(AbstractBase&&) = default;
+    };
+
+Alternatively to prevent slicing as per [C.67](#Rc-copy-virtual),
+the copy and move operations can all be deleted:
+
+    class ClonableBase {
+    public:
+      virtual unique_ptr<ClonableBase> clone() const;
+      virtual ~ClonableBase() = default;
+      ClonableBase(const ClonableBase&) = delete;
+      ClonableBase& operator=(const ClonableBase&) = delete;
+      ClonableBase(ClonableBase&&) = delete;
+      ClonableBase& operator=(ClonableBase&&) = delete;
+    };
+
+Defining only the move operations or only the copy operations would have the
+same effect here, but stating the intent explicitly for each special member
+makes it more obvious to the reader.
+
+##### 注意
+
+Compilers enforce much of this rule and ideally warn about any violation.
+
+##### 注意
+
+デストラクタを持つクラスで、暗黙的に生成されたコピー操作に依存するのは、非推奨です。
+
 ### <a name="Rc-matched"></a>C.22: デフォルト操作に一貫性を持たせよう
 
 ### <a name="Rc-dtor"></a>C.30: クラスが、オブジェクト解体で明示的なアクションが必要なら、デストラクタを定義しよう
