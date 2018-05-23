@@ -400,7 +400,7 @@ Compilers enforce much of this rule and ideally warn about any violation.
 
 ### <a name="Ro-namespace"></a>C.168: 多重定義する演算子は、そのオペランドの名前空間で定義しよう
 
-### <a name="Ro-lambda"></a>C.170: ラムダを多重定義したいときは、汎用的なラムダを使おう
+### <a name="Ro-lambda"></a>C.170: ラムダを多重定義したいときは、ジェネリックラムダを使おう
 
 ### <a name="Ru-union"></a>C.180: メモリを節約するために `union` を使おう
 
@@ -474,7 +474,7 @@ Compilers enforce much of this rule and ideally warn about any violation.
 
 ### <a name="Rr-sharedptrparam-const"></a>R.36: `const shared_ptr<widget>&` 引数を取って、それがそのオブジェクトへの参照カウントを保持し続ける可能性があることを表そう
 
-### <a name="Rr-smartptrget"></a>R.37: エリアスしたスマートポインタから得たポインタあるいは参照を渡さないこと
+### <a name="Rr-smartptrget"></a>R.37: エイリアスしたスマートポインタから得たポインタあるいは参照を渡さないこと
 
 ### <a name="Res-lib"></a>ES.1: 他のライブラリや「手作りコード」より標準ライブラリを選ぼう
 
@@ -792,9 +792,9 @@ Compilers enforce much of this rule and ideally warn about any violation.
 
 ### <a name="Rt-essential"></a>T.41: テンプレートのコンセプトには、必須の属性だけを要求しよう
 
-### <a name="Rt-alias"></a>T.42: ノーテーションを単純にして、実装の詳細を隠すために、テンプレートのエリアスを使おう
+### <a name="Rt-alias"></a>T.42: ノーテーションを単純にして、実装の詳細を隠すために、テンプレートのエイリアスを使おう
 
-### <a name="Rt-using"></a>T.43: エリアスを定義する時は、`typedef` より `using` を選ぼう
+### <a name="Rt-using"></a>T.43: エイリアスを定義する時は、`typedef` より `using` を選ぼう
 
 ### <a name="Rt-deduce"></a>T.44: クラステンプレートの引数型を推論するために、関数テンプレートを使おう（可能ならば）
 
@@ -844,7 +844,7 @@ Compilers enforce much of this rule and ideally warn about any violation.
 
 ### <a name="Rt-emulate"></a>T.121: テンプレートメタプログラミングは主に、コンセプトをエミュレートするために使おう
 
-### <a name="Rt-tmp"></a>T.122: コンパイル時に型を計算するためにテンプレート（通常はテンプレートエリアス）を使おう
+### <a name="Rt-tmp"></a>T.122: コンパイル時に型を計算するためにテンプレート（通常はテンプレートエイリアス）を使おう
 
 ### <a name="Rt-fct"></a>T.123: コンパイル時に値を計算するために `constexpr` 関数を使おう
 
