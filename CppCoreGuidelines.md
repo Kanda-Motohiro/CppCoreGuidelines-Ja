@@ -127,6 +127,16 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rf-assignment-op"></a>F.47: 代入演算子からは `T&` を返そう
 
+##### 理由
+
+`operator=(const T&)` の演算子多重定義（特に、値型では）の慣例は、代入をして、（`const` でない）`*this` を返すことです。
+これは、標準ライブラリ型との一貫性を保証しますし、「整数がするようにしろ」という原則にも従います。
+
+##### 注意
+
+かつては、代入演算子が、 `const T&` を返すようにするという推奨があったこともありました。
+これは主に、`(a = b) = c` のような形のコードを避けるためでした。-- そのようなコードは、標準の型との一貫性に違反する価値のあるほど一般的ではありません。
+
 ### <a name="Rf-capture-vs-overload"></a>F.50: 関数ではうまく仕事ができないとき（ローカル変数を補足する、ローカル関数を書く）は、ラムダを使おう
 
 ### <a name="Rf-default-args"></a>F.51: 選択が可能なら、多重定義よりデフォルト引数を選ぼう
@@ -248,11 +258,9 @@ makes it more obvious to the reader.
 
 ##### 注意
 
-Compilers enforce much of this rule and ideally warn about any violation.
-
-##### 注意
-
 デストラクタを持つクラスで、暗黙的に生成されたコピー操作に依存するのは、非推奨です。
+訳註。デストラクタを書いても、コピー代入と演算子を暗黙的に生成するコンパイラが現在ありますが、
+それは標準に準拠していないふるまいなので、安心しないように。
 
 ### <a name="Rc-matched"></a>C.22: デフォルト操作に一貫性を持たせよう
 
@@ -576,6 +584,18 @@ Compilers enforce much of this rule and ideally warn about any violation.
 
 ### <a name="Res-goto"></a>ES.76: `goto` を避けよう
 
+##### 例外
+
+ネストしたループから抜け出る時。その場合、常に、前方にジャンプすること。
+
+    for (int i = 0; i < imax; ++i)
+        for (int j = 0; j < jmax; ++j) {
+            if (a[i][j] > elem_max) goto finished;
+            // ...
+        }
+    finished:
+    // ...
+
 ### <a name="Res-continue"></a>ES.77: ループでの `break` と `continue` の使用は最小としよう
 
 ### <a name="Res-break"></a>ES.78: 空でない `case` は常に `break` で終わらせよう
@@ -637,6 +657,10 @@ Compilers enforce much of this rule and ideally warn about any violation.
 
 ### <a name="Rper-space"></a>Per.18: 領域は時間です
 
+##### 理由
+
+性能は、典型的には、メモリアクセス時間が支配的だから。
+
 ### <a name="Rper-access"></a>Per.19: 予測可能なようにメモリアクセスをしよう
 
 ### <a name="Rper-context"></a>Per.30: クリティカルなパスではコンテキストスイッチを避けよう
@@ -692,6 +716,18 @@ Compilers enforce much of this rule and ideally warn about any violation.
 ### <a name="Rconc-distrust"></a>CP.101: あなたのハードウェアとコンパイラの組み合わせを疑おう
 
 ### <a name="Rconc-literature"></a>CP.102: 注意深く論文を勉強しよう
+
+##### 参考文献
+
+* Anthony Williams: C++ concurrency in action. Manning Publications.
+* Boehm, Adve, You Don't Know Jack About Shared Variables or Memory Models , Communications of the ACM, Feb 2012.
+* Boehm, "Threads Basics", HPL TR 2009-259.
+* Adve, Boehm, "Memory Models: A Case for Rethinking Parallel Languages and Hardware", Communications of the ACM, August 2010.
+* Boehm, Adve, "Foundations of the C++ Concurrency Memory Model", PLDI 08.
+* Mark Batty, Scott Owens, Susmit Sarkar, Peter Sewell, and Tjark Weber, "Mathematizing C++ Concurrency", POPL 2011.
+* Damian Dechev, Peter Pirkelbauer, and Bjarne Stroustrup: Understanding and Effectively Preventing the ABA Problem in Descriptor-based Lock-free Designs. 13th IEEE Computer Society ISORC 2010 Symposium. May 2010.
+* Damian Dechev and Bjarne Stroustrup: Scalable Non-blocking Concurrent Objects for Mission Critical Code. ACM OOPSLA'09. October 2009
+* Damian Dechev, Peter Pirkelbauer, Nicolas Rouquette, and Bjarne Stroustrup: Semantically Enhanced Containers for Concurrent Real-Time Systems. Proc. 16th Annual IEEE International Conference and Workshop on the Engineering of Computer Based Systems (IEEE ECBS). April 2009.
 
 ### <a name="Rconc-double"></a>CP.110: 初期化のために、ダブルチェックするロックを自分で書かないこと
 
@@ -938,6 +974,17 @@ Compilers enforce much of this rule and ideally warn about any violation.
 
 ### <a name="Rio-endl"></a>SL.io.50: `endl` は使わないこと
 
+##### 理由
+
+`endl` 操作子は、ほぼ、`'\n'` と `"\n"` に同じです。
+それはとても一般的に使われるため、冗長な `flush()` をすることで出力をおおいに遅くします。
+この性能低下は、`printf` スタイルの出力と比べてとても大きいことがあります。
+
+##### 例
+
+    cout << "Hello, World!" << endl;    // two output operations and a flush
+    cout << "Hello, World!\n";          // one output operation and no flush
+
 ### <a name="Rclib-jmp"></a>SL.C.1: setjmp/longjmp は使わないこと
 
 ### <a name="Ra-stable"></a>A.1: コードの安定した部分をあまりそうでない部分と分離しよう
@@ -951,6 +998,17 @@ Compilers enforce much of this rule and ideally warn about any violation.
 ### <a name="Rnr-single-return"></a>NR.2: ダメ：関数には一つだけの `return` 文があるべきです
 
 ### <a name="Rnr-no-exceptions"></a>NR.3: ダメ：例外を使わないこと
+
+##### （この規則に従わない）理由
+
+この禁止則には３つの主な理由があるようです。
+
+* 例外は非効率的です
+* 例外はリークと誤りにつながります
+* 例外の性能は予測不可能です
+
+全ての人を満足させるようにこの問題の結論を出す方法はありません。
+略
 
 ### <a name="Rnr-lots-of-files"></a>NR.4: ダメ：クラスの宣言はそれぞれ独自のソースファイルに置こう
 
@@ -983,6 +1041,29 @@ Compilers enforce much of this rule and ideally warn about any violation.
 ### <a name="Rl-literals"></a>NL.11: リテラルは読みやすくしよう
 
 ### <a name="Rl-order"></a>NL.16: 慣用的なクラスメンバ宣言順を使おう
+
+##### 理由
+
+慣用的なメンバの順序は、読みやすさを増します。
+クラスを宣言する時は、以下の順序を使おう。
+
+* 型: クラス, enum, そしてエイリアス (`using`)
+* コンストラクタ, 代入, デストラクタ
+* 関数
+* データ
+
+`public` その次に `protected` その次に `private` の順を使おう。
+
+##### 例
+
+    class X {
+    public:
+        // interface
+    protected:
+        // unchecked function for use by derived class implementations
+    private:
+        // implementation details
+    };
 
 ### <a name="Rl-knr"></a>NL.17: K&R に由来するレイアウトを使おう
 
