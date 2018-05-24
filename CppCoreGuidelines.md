@@ -83,6 +83,13 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rf-smart"></a>F.7: 一般的な用途には、スマートポインタでなく、 `T*` あるいは `T&` 引数を取ろう
 
+##### 理由
+
+スマートポインタを渡すと、所有権を渡すあるいは共用します。そしてそれは所有権のセマンティクスが意図されるときにだけ
+使われるべきです（[R.30](#Rr-smartptrparam)を参照）。
+スマートポインタで渡すことは、その関数の使用を、スマートポインタを使う呼び出し元に限定します。
+共用されたスマートポインタ（例えば、[R.30](#Rr-smartptrparam)）を渡すことは、実行時のコストを意味します。
+
 ### <a name="Rf-pure"></a>F.8: pure 関数を使おう
 
 ### <a name="Rf-unused"></a>F.9: 使わないパラメタは、無名とするべきです
@@ -134,7 +141,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ##### 注意
 
-かつては、代入演算子が、 `const T&` を返すようにするという推奨があったこともありました。
+かつて、代入演算子が、 `const T&` を返すようにするという推奨がありました。
 これは主に、`(a = b) = c` のような形のコードを避けるためでした。-- そのようなコードは、標準の型との一貫性に違反する価値のあるほど一般的ではありません。
 
 ### <a name="Rf-capture-vs-overload"></a>F.50: 関数ではうまく仕事ができないとき（ローカル変数を補足する、ローカル関数を書く）は、ラムダを使おう
@@ -182,17 +189,17 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 他のものも考慮が必要なことが多いでしょう。
 
 デフォルトコンストラクタ以外の特別なメンバ関数を一つでも宣言すると、それが `=default` あるいは `=delete` 
-であっても、ムーブコンストラクタとムーブ代入演算子の暗黙的な生成を抑止します。
+であっても、ムーブコンストラクタとムーブ代入演算子の暗黙的な生成が抑止されます。
 
 ムーブコンストラクタあるいはムーブ代入演算子を宣言すると、それが `=default` あるいは `=delete` 
 であっても、暗黙的に生成されたコピーコンストラクタあるいは暗黙的に生成されたコピー代入演算子
 を delete されたものとして定義することになります。
 
 なので、これら特別な関数の一つでも宣言したら、他も全て宣言するべきです。そうしないと、
-全ての潜在的なムーブをより高価なコピーに変えるとか、クラスをムーブオンリイにするなどの
+全ての潜在的なムーブをより高価なコピーに変えるとか、クラスをムーブオンリィにするなどの
 期待されない効果を生むことになります。
 
-##### Example, bad
+##### 例。良くない
 
     struct M2 {   // bad: incomplete set of default operations
     public:
@@ -220,15 +227,15 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ##### 注意
 
-If you want a default implementation of a default operation (while defining another), write `=default` to show you're doing so intentionally for that function.
-If you don't want a default operation, suppress it with `=delete`.
+あるデフォルト操作のデフォルト実装がほしい（他のを定義すると同時に）時は、`=default` と書けば、その関数に対してそういう意味になります。
+デフォルト操作がいらない時は、`=delete` でそれを抑止しましょう。
 
-##### Example, good
+##### 例。よろしい
 
-When a destructor needs to be declared just to make it `virtual`, it can be
-defined as defaulted. To avoid suppressing the implicit move operations
-they must also be declared, and then to avoid the class becoming move-only
-(and not copyable) the copy operations must be declared:
+`virtual` にするためにだけ、デストラクタを宣言する必要がある時は、それは、デフォルトを取る
+ものとして定義することができます。暗黙的なムーブ操作が抑止されるのを避けるためには、それらも
+宣言する必要があります。すると次に、クラスがムーブオンリィ（そしてコピー不可能）になるのを避けるために、
+コピー操作を宣言しなくていけません。
 
     class AbstractBase {
     public:
@@ -239,8 +246,7 @@ they must also be declared, and then to avoid the class becoming move-only
       AbstractBase& operator=(AbstractBase&&) = default;
     };
 
-Alternatively to prevent slicing as per [C.67](#Rc-copy-virtual),
-the copy and move operations can all be deleted:
+あるいは、[C.67](#Rc-copy-virtual) に示すように、スライシングを避けるために、コピーとムーブ操作は全部削除することができます。
 
     class ClonableBase {
     public:
@@ -252,9 +258,8 @@ the copy and move operations can all be deleted:
       ClonableBase& operator=(ClonableBase&&) = delete;
     };
 
-Defining only the move operations or only the copy operations would have the
-same effect here, but stating the intent explicitly for each special member
-makes it more obvious to the reader.
+ここでは、ムーブ操作だけあるいはコピー操作だけを定義しても、同じ効果が得られます。しかし、
+それぞれの特別なメンバに明示的に意図を述べることは、読み手にとってよりそれを明らかにします。
 
 ##### 注意
 
@@ -386,6 +391,21 @@ makes it more obvious to the reader.
 
 ### <a name="Rh-make_shared"></a>C.151: `shared_ptr` が所有するオブジェクトを作成するために `make_shared()` を使おう
 
+##### 理由
+
+`make_shared` を使うと、構築がより簡潔な文になります。
+それはまた、`shared_ptr` の参照カウンタをそのオブジェクトの隣に置くことによって、参照カウンタが別に確保されることを
+避ける利点もあります。
+
+##### 例
+
+    void test() {
+        // OK: but repetitive; and separate allocations for the Bar and shared_ptr's use count
+        shared_ptr<Bar> p {new<Bar>{7}};
+
+        auto q = make_shared<Bar>(7);   // Better: no repetition of Bar; one object
+    }
+
 ### <a name="Rh-array"></a>C.152: 決して、派生クラスのオブジェクトの配列へのポインタを、その基底へのポインタに代入しないこと
 
 ### <a name="Rh-use-virtual"></a>C.153: キャストより仮想関数を選ぼう
@@ -461,6 +481,31 @@ makes it more obvious to the reader.
 ### <a name="Rr-owner"></a>R.20: 所有を示すため、 `unique_ptr` あるいは `shared_ptr` を使おう
 
 ### <a name="Rr-unique"></a>R.21: 所有権を共有する必要がなければ、`shared_ptr` より `unique_ptr` を使おう
+
+##### Reason
+
+`unique_ptr` は概念的により単純で、かつ、より予測可能で（破壊がいつ起きるかわかります）、
+かつ、より高速（使用カウンタを暗黙的に維持しません）です。
+
+##### 例。良くない
+
+これは不必要に参照カウンタを加え、維持します。
+
+    void f()
+    {
+        shared_ptr<Base> base = make_shared<Derived>();
+        // use base locally, without copying it -- refcount never exceeds 1
+    } // destroy base
+
+##### 例
+
+これはより効率的です:
+
+    void f()
+    {
+        unique_ptr<Base> base = make_unique<Derived>();
+        // use base locally
+    } // destroy base
 
 ### <a name="Rr-make_shared"></a>R.22: `shared_ptr` は `make_shared()` で作ろう
 
