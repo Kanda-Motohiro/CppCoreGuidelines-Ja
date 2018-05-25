@@ -1,7 +1,7 @@
-Here is a Japanese translation of (only) rule titles (for now) from [C++ Core Guidelines](https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md) as of April 16, 2018 by kanda.motohiro@gmail.com. This translation is disributed under the [LICENSE](https://github.com/isocpp/CppCoreGuidelines/blob/master/LICENSE).
+Here is a Japanese translation of (mostly only) rule titles (for now) from [C++ Core Guidelines](https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md) as of April 16, 2018 by kanda.motohiro@gmail.com. This translation is disributed under the [LICENSE](https://github.com/isocpp/CppCoreGuidelines/blob/master/LICENSE).
 The LICENSE is very restrictive but according to this [issue discussion on translation](https://github.com/isocpp/CppCoreGuidelines/issues/1065), publishing a translation is permitted.
 
-以下は、C++ Core Guidelines の規則のタイトルだけを訳したものです。ライセンスファイルによれば、訳をこのように公開することは不可能なのですが、引用したイシューでは、許可されているようです。
+以下は、C++ Core Guidelines の規則の（ほぼ）タイトルだけを訳したものです。ライセンスファイルによれば、訳をこのように公開することは不可能なのですが、引用したイシューでは、許可されているようです。
 
 ### <a name="Rp-direct"></a>P.1: アイディアは直接コードで表現しよう
 
@@ -95,6 +95,23 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 ### <a name="Rf-unused"></a>F.9: 使わないパラメタは、無名とするべきです
 
 ### <a name="Rf-conventional"></a>F.15: 情報を伝えるには、単純で普通の方法を選ぼう
+
+##### 理由
+
+「普通でなく賢い」テクニックを使うことは、人を驚かせ、他のプログラマの理解を遅くし、バグを起こしやすくします。
+もしあなたが本当に、一般的なテクニックを超えた最適化を必要と感じた時は、それが本当に改善であるかを確かめるために測定を行い、ドキュメント／コメントしなさい。なぜならばその改善は移植性がないかもしれないからです。
+
+以下の表は 以下のガイドライン F.16-21 のアドバイスをまとめたものです。
+
+普通の引数の渡し方：
+
+![Normal parameter passing table](https://github.com/isocpp/CppCoreGuidelines/param-passing-normal.png "Normal parameter passing")
+
+上級者向けの引数の渡し型：
+
+![Advanced parameter passing table](https://github.com/isocpp/CppCoreGuidelines/param-passing-advanced.png "Advanced parameter passing")
+
+上級者向けのテクニックは、その必要性をきちんと示し、その必要性をコメントにドキュメントした後で使おう。
 
 ### <a name="Rf-in"></a>F.16: 「入力」パラメタでは、安価にコピーできる型は値渡しで、そうでないものは `const` への参照で渡そう
 
@@ -264,7 +281,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 ##### 注意
 
 デストラクタを持つクラスで、暗黙的に生成されたコピー操作に依存するのは、非推奨です。
-訳註。デストラクタを書いても、コピー代入と演算子を暗黙的に生成するコンパイラが現在ありますが、
+訳註。デストラクタを書いても、コピーコンストラクタとコピー代入演算子を暗黙的に生成するコンパイラが現在ありますが、
 それは標準に準拠していないふるまいなので、安心しないように。
 
 ### <a name="Rc-matched"></a>C.22: デフォルト操作に一貫性を持たせよう
