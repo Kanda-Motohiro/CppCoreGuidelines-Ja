@@ -105,11 +105,11 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 普通の引数の渡し方：
 
-![Normal parameter passing table](https://github.com/isocpp/CppCoreGuidelines/param-passing-normal.png "Normal parameter passing")
+![Normal parameter passing table](https://github.com/isocpp/CppCoreGuidelines/blob/master/param-passing-normal.png "Normal parameter passing")
 
 上級者向けの引数の渡し型：
 
-![Advanced parameter passing table](https://github.com/isocpp/CppCoreGuidelines/param-passing-advanced.png "Advanced parameter passing")
+![Advanced parameter passing table](https://github.com/isocpp/CppCoreGuidelines/blob/master/param-passing-advanced.png "Advanced parameter passing")
 
 上級者向けのテクニックは、その必要性をきちんと示し、その必要性をコメントにドキュメントした後で使おう。
 
