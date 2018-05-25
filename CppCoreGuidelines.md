@@ -35,6 +35,16 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Ri-singleton"></a>I.3: シングルトンは避けよう
 
+##### 例外
+
+最初にアクセスされた時に初期化をするために、最も単純な「シングルトン」（あまりに単純なので、普通はシングルトンであるとは考えられません）を使うことができます。
+
+    X& myX()
+    {
+        static X my_x {3};
+        return my_x;
+    }
+
 ### <a name="Ri-typed"></a>I.4: インタフェースは、正確で、強い型付けとしよう
 
 ### <a name="Ri-pre"></a>I.5: 前提条件を述べよう (もしあれば)
@@ -123,7 +133,30 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rf-out"></a>F.20: 「出力」の出力値は、出力パラメタより、戻り値を選ぼう
 
+##### 例外
+
+* 継承階層中の型のような、値型でないものは、オブジェクトを `unique_ptr` あるいは `shared_ptr` で返そう。
+* もし型がムーブが高価（例えば、`array<BigPOD>`）な時は、それをフリーストア上に確保しハンドル（例えば、`unique_ptr`）を返すか、（出力パラメタとして使われる）`const` でない転送先オブジェクトへの参照に渡すことを考えよう。
+* 内側のループにある関数への複数の呼び出しにまたがって、キャパシティを持つオブジェクト(例えば、`std::string`, `std::vector`) を再使用する場合: [treat it as an in/out parameter and pass by reference](#Rf-out-multi)
+
+##### 例
+
+    struct Package {      // exceptional case: expensive-to-move object
+        char header[16];
+        char load[2024 - 16];
+    };
+
+    Package fill();       // Bad: large return value
+    void fill(Package&);  // OK
+
+    int val();            // OK
+    void val(int&);       // Bad: Is val reading its argument
+
 ### <a name="Rf-out-multi"></a>F.21: 複数の「出力」値を戻すには、 tuple あるいは struct を選ぼう
+
+C++17 では、「構造化バインディング」を使って、複数の変数を宣言して初期化することができるようになるはずです：
+
+    if (auto [ iter, success ] = my_set.insert("Hello"); success) do_something_with(iter);
 
 ### <a name="Rf-ptr"></a>F.22: 一つのオブジェクトを指定するには、 `T*` あるいは `owner<T*>` を選ぼう
 
@@ -194,6 +227,25 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 ### <a name="Rc-regular"></a>C.11: 具象型は、規則的としよう
 
 ### <a name="Rc-zero"></a>C.20: デフォルト操作を避けることができるなら、そうしよう
+
+##### 例
+
+    struct Named_map {
+    public:
+        // ... no default operations declared ...
+    private:
+        string name;
+        map<int, int> rep;
+    };
+
+    Named_map nm;        // default construct
+    Named_map nm2 {nm};  // copy construct
+
+`std::map` と `string` は全ての特別な関数を持っていますから、これ以上の作業は要りません。
+
+##### 注意
+
+これは、 "the rule of zero" として知られています。
 
 ### <a name="Rc-five"></a>C.21: デフォルト操作のどれか一つでも、定義あるいは `=delete` するなら、全てを定義あるいは `=delete` しよう
 
@@ -499,7 +551,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rr-unique"></a>R.21: 所有権を共有する必要がなければ、`shared_ptr` より `unique_ptr` を使おう
 
-##### Reason
+##### 理由
 
 `unique_ptr` は概念的により単純で、かつ、より予測可能で（破壊がいつ起きるかわかります）、
 かつ、より高速（使用カウンタを暗黙的に維持しません）です。
@@ -738,6 +790,29 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 ### <a name="Rconc-volatile"></a>CP.8: 同期のために `volatile` を使わないこと
 
 ### <a name="Rconc-tools"></a>CP.9: 可能な時は必ず、ツールを使ってあなたの並列コードを検証しよう
+
+##### 注意
+
+Thread safety is challenging, often getting the better of experienced programmers: tooling is an important strategy to mitigate those risks.
+There are many tools "out there", both commercial and open-source tools, both research and production tools.
+Unfortunately people's needs and constraints differ so dramatically that we cannot make specific recommendations,
+but we can mention:
+
+* 静的強制ツール: both [clang](http://clang.llvm.org/docs/ThreadSafetyAnalysis.html)
+and some older versions of [GCC](https://gcc.gnu.org/wiki/ThreadSafetyAnnotation)
+have some support for static annotation of thread safety properties.
+Consistent use of this technique turns many classes of thread-safety errors into compile-time errors.
+The annotations are generally local (marking a particular member variable as guarded by a particular mutex),
+and are usually easy to learn. However, as with many static tools, it can often present false negatives;
+cases that should have been caught but were allowed.
+
+* 動的強制ツール: Clang の [Thread Sanitizer](http://clang.llvm.org/docs/ThreadSanitizer.html) (TSAN とも呼ばれます)
+は、パワフルな動的ツールの例です。それはあなたのプログラムのビルドと実行を変えて、メモリアクセスの記録を追加します。
+そして、あなたのバイナリのある実行時でのデータ競合を完全に見つけます。
+このためのコストはメモリ（ほとんどの場合、５から１０倍）と、CPU 速度低下（２から２０倍）の両方です。
+このような動的なツールは統合テスト、canary push、あるいは複数のスレッドで動くユニットテストに適用するのが最も適切です。
+ワークロードが重要です：TSAN が問題を見つける時は、それはほぼ常に、実際のデータ競合です。
+しかし、それは与えられた実行で起きた競合しか見つけることはできません。
 
 ### <a name="Rconc-raii"></a>CP.20: 単純な `lock()/unlock()` は決して使わず、 RAII を使おう
 
@@ -980,7 +1055,25 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rs-using"></a>SF.6: `using namespace` 指令は、移行のため、基本的なライブラリ (`std` のような)のため、あるいは、ローカルスコープ内（その時に限り）で使おう
 
-### <a name="Rs-using-directive"></a>SF.7: ヘッダフィル内のグローバルスコープで、 `using namespace` を書かないこと
+### <a name="Rs-using-directive"></a>SF.7: ヘッダファイル内のグローバルスコープで、 `using namespace` を書かないこと
+
+##### 理由
+
+そうすると、`#include` する人は、効果的にあいまいさを解決し代わりのものを使うことができなくなります。またそうすると、`#include` されるヘッダが順序に依存するようになります。なぜならば、それらは異なる順序でインクルードされた時、異なる意味をもつことがあるからです。
+##### 例
+
+    // bad.h
+    #include <iostream>
+    using namespace std; // bad
+
+    // user.cpp
+    #include "bad.h"
+
+    bool copy(/*... some parameters ...*/);    // some function that happens to be named copy
+
+    int main() {
+        copy(/*...*/);    // now overloads local ::copy and std::copy, could be ambiguous
+    }
 
 ### <a name="Rs-guards"></a>SF.8: 全ての  `.h` ファイルで、`#include` ガードを使おう
 
