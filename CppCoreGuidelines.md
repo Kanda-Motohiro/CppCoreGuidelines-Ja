@@ -426,13 +426,123 @@ C++17 では、「構造化バインディング」を使って、複数の変�
 
 ### <a name="Rc-complete"></a>C.41: コンストラクタは、完全に初期化されたオブジェクトを作るべきです
 
+##### 理由
+
+コンストラクタは、クラスの不変条件を確立します。クラスの使用者は、コンストラクトされたオブジェクトが使用可能であることを前提とできるべきです。
+
+##### 例、良くない
+
+    class X1 {
+        FILE* f;   // call init() before any other function
+        // ...
+    public:
+        X1() {}
+        void init();   // initialize f
+        void read();   // read from f
+        // ...
+    };
+
+    void f()
+    {
+        X1 file;
+        file.read();   // crash or bad read!
+        // ...
+        file.init();   // too late
+        // ...
+    }
+
+コンパイラはコメントを読みません。
+
+##### 例外
+
+コンストラクタで有効なオブジェクトを作成するのが難しい時は、 [ファクトリ関数を使おう](#Rc-factory)。
+
 ### <a name="Rc-throw"></a>C.42: コンストラクタで有効なオブジェクトを作ることができないなら、例外を投げよう
 
 ### <a name="Rc-default0"></a>C.43: コピー可能な (値型の) クラスはデフォルトコンストラクタを持つことを保証しよう
 
+##### 理由
+
+言語とライブラリの機能の多くは、要素を初期化するのにデフォルトコンストラクタに依存します。例えば、`T a[10]` と `std::vector<T> v(10)` 。
+デフォルトコンストラクタはまた、コピー可能な型で、適切な「moved from」された状態を定義する作業を、しばしば、単純化します。
+
+##### 例
+
+    class Date { // BAD: no default constructor
+    public:
+        Date(int dd, int mm, int yyyy);
+        // ...
+    };
+
+    vector<Date> vd1(1000);   // default Date needed here
+    vector<Date> vd2(1000, Date{Month::October, 7, 1885});   // alternative
+
+デフォルトコンストラクタは、ユーザ宣言されたコンストラクタが無い時にだけ、自動で生成されます。なので、上の例で、ベクトル `vd1` を初期化することは不可能です。
+デフォルト値が無いことは、使用者を驚かせ、その使用を複雑にします。なので、合理的にそれを定義することができるなら、するべきです。
+
+##### 注意
+
+全てのメンバがデフォルトコンストラクタを持つクラスは、暗黙的にデフォルトコンストラクタを得ます。
+
+    struct X {
+        string s;
+        vector<int> v;
+    };
+
+    X x; // means X{{}, {}}; that is the empty string and the empty vector
+
+組み込み型は、適切にデフォルトでコンストラクトされないことに注意ください。
+
+    struct X {
+        string s;
+        int i;
+    };
+
+    void f()
+    {
+        X x;    // x.s is initialized to the empty string; x.i is uninitialized
+
+        cout << x.s << ' ' << x.i << '\n';
+        ++x.i;
+    }
+
+Static に確保された組み込み型のオブジェクトは、デフォルトで、`0` に初期化されます。しかし、ローカルな組み込み型変数はそうではありません。
+あなたのコンパイラは、ローカルな組み込み型変数をデフォルトで初期化することがあるかもしれませんが、最適化ビルドではそうしないかもしれないことに注意ください。
+なので、上の例のようなコードは動くように見えるかもしれませんが、それは未定義の振る舞いに依存しています。
+あなたが初期化を必要とするならば、明示的なデフォルト初期化が役に立ちます：
+
+    struct X {
+        string s;
+        int i {};   // default initialize (to 0)
+    };
+
 ### <a name="Rc-default00"></a>C.44: デフォルトコンストラクタは、単純で例外を投げないことしよう
 
 ### <a name="Rc-default"></a>C.45: データメンバを初期化するだけのデフォルトコンストラクタを定義しないこと；クラス内メンバ初期化子をその代わりに使おう
+
+##### 理由
+
+クラス内メンバ初期化子を使うと、コンパイラはあなたの代わりに関数を生成します。コンパイラが生成した関数はより効率的なことがあります。
+
+##### Example, bad
+
+    class X1 { // BAD: doesn't use member initializers
+        string s;
+        int i;
+    public:
+        X1() :s{"default"}, i{1} { }
+        // ...
+    };
+
+##### Example
+
+    class X2 {
+        string s = "default";
+        int i = 1;
+    public:
+        // use compiler-generated default constructor
+        // ...
+    };
 
 ### <a name="Rc-explicit"></a>C.46: デフォルトで、一つの引数を取るコンストラクタは explicit と宣言しよう
 
