@@ -79,6 +79,54 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Ri-encapsulate"></a>I.30: 規則を破るところはカプセル化しよう
 
+##### 例
+
+何らかの入力（例えば、`main` への引数）によって、ファイル、コマンドライン、あるいは標準入力からの入力を読み込む必要のあるプログラムを考えましょう。
+例えば、こんなふうに書けます。
+
+    bool owned;
+    owner<istream*> inp;
+    switch (source) {
+    case std_in:        owned = false; inp = &cin;                       break;
+    case command_line:  owned = true;  inp = new istringstream{argv[2]}; break;
+    case file:          owned = true;  inp = new ifstream{argv[2]};      break;
+    }
+    istream& in = *inp;
+
+これは、 [初期化されていない変数を使わない](#Res-always) 規則、
+[所有権を無視する](#Ri-raw) 規則、
+[マジック定数を使わない](#Res-magic)規則に違反します。
+特に、誰かがどこかで、こう書くことを覚えていなければいけません。
+
+    if (owned) delete inp;
+
+この特定の例は、`cin` に対しては何もしない特別の deleter を持つ `unique_ptr` を使って解決することができます。
+しかしそれは、（この問題に必ずぶつかる）初心者には複雑です。
+そしてこの例は、静的と考えたい属性（今の場合、所有権）が、たまに、実行時に解決されなくてはいけないことがあるという、より一般的な問題の例です。
+一般的で、最もひんぱんで、最も安全な例は、静的に解決することができます。なので、これにコストと複雑性を加えたくはありません。
+しかし、一般的でなく、あまり安全でなく、必然的により高価なケースにも対応しなくてはいけません。
+そのような例は、[[Str15]](http://www.stroustrup.com/resource-model.pdf) で議論されます。
+
+そのためにクラスを書きます。
+
+    class Istream { [[gsl::suppress(lifetime)]]
+    public:
+        enum Opt { from_line = 1 };
+        Istream() { }
+        Istream(zstring p) :owned{true}, inp{new ifstream{p}} {}            // read from file
+        Istream(zstring p, Opt) :owned{true}, inp{new istringstream{p}} {}  // read from command line
+        ~Istream() { if (owned) delete inp; }
+        operator istream& () { return *inp; }
+    private:
+        bool owned = false;
+        istream* inp = &cin;
+    };
+
+これで、`istream` の所有権の動的な性質はカプセル化されました。
+現実のコードでは、潜在的なエラーへのチェックを少し、追加するのが良いでしょう。
+
+訳註。引数があれば、ファイル、なければ、標準入力、というのは、よくあるのに、C++ で書きにくいのは有名らしく、私もはまった結果、引数を評価した後で、rdbuf を入れ直す、というトリックを教わりました。
+
 ### <a name="Rf-package"></a>F.1: 意味のある操作を注意深く名前を付けた関数に「パッケージ」しよう
 
 ### <a name="Rf-logical"></a>F.2: 一つの関数は一つの論理的な操作をするべきです
@@ -137,7 +185,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 * 継承階層中の型のような、値型でないものは、オブジェクトを `unique_ptr` あるいは `shared_ptr` で返そう。
 * もし型がムーブが高価（例えば、`array<BigPOD>`）な時は、それをフリーストア上に確保しハンドル（例えば、`unique_ptr`）を返すか、（出力パラメタとして使われる）`const` でない転送先オブジェクトへの参照に渡すことを考えよう。
-* 内側のループにある関数への複数の呼び出しにまたがって、キャパシティを持つオブジェクト(例えば、`std::string`, `std::vector`) を再使用する場合: [treat it as an in/out parameter and pass by reference](#Rf-out-multi)
+* 内側のループにある関数への複数の呼び出しにまたがって、キャパシティを持つオブジェクト(例えば、`std::string`, `std::vector`) を再使用する場合。
 
 ##### 例
 
@@ -215,6 +263,28 @@ C++17 では、「構造化バインディング」を使って、複数の変�
 ### <a name="Rc-member"></a>C.4: クラスの表現へ直接のアクセスを必要とする時に限って、関数をメンバにしよう
 
 ### <a name="Rc-helper"></a>C.5: ヘルパー関数は、それがサポートするクラスと同じ名前空間に置こう
+
+##### 理由
+
+ヘルパー関数とは、クラスの表現への直接のアクセスを必要としない一方、そのクラスへの便利なインタフェースの一部と考えられる関数（普通は、そのクラスを書く人が提供する）です。
+それをそのクラスと同じ名前空間に置くと、それとクラスの関係が明らかになり、引数依存の検索で見つけることが可能となります。
+
+##### 例
+
+    namespace Chrono { // here we keep time-related services
+
+        class Time { /* ... */ };
+        class Date { /* ... */ };
+
+        // helper functions:
+        bool operator==(Date, Date);
+        Date next_weekday(Date);
+        // ...
+    }
+
+##### 注意
+
+これは、[多重定義された演算子](#Ro-namespace) で特に重要です。
 
 ### <a name="Rc-standalone"></a>C.7: クラスあるいは列挙型の定義と、その型の変数の宣言を同じ文でするのはやめよう
 
@@ -620,11 +690,104 @@ C++17 では、「構造化バインディング」を使って、複数の変�
 
 ### <a name="Res-always"></a>ES.20: オブジェクトは常に初期化しよう
 
+##### 例
+
+    void use(int arg)
+    {
+        int i;   // bad: uninitialized variable
+        // ...
+        i = 7;   // initialize i
+    }
+
+違います。`i = 7` は `i` を初期化しません。それに代入しているのです。さらに、`i` は、`...` の部分で読むことができます。正しくは：
+
+    void use(int arg)   // OK
+    {
+        int i = 7;   // OK: initialized
+        string s;    // OK: default initialized
+        // ...
+    }
+
+##### 注意
+
+*常に初期化しよう* 規則は、 *オブジェクトは使う前に設定されなくてはいけません* 言語規則より、意図的に強いです。
+後者はよりゆるい規則で、技術的なバグを捉えます。しかし：
+
+* それは読みにくいコードにつながります
+* それは人々に名前を必要以上に大きいスコープで宣言することを許します
+* それは複雑なコードを許し、論理的なバグを生みます
+* それはリファクタリングを妨げます
+
+*常に初期化しよう* 規則は、メンテナンス可能性を高めることを目的としたスタイルの規則であるとともに、設定する前に使う誤りを防ぐための規則です。
+
+##### 例外
+
+すぐに入力から初期化される予定のオブジェクトを宣言する時は、それを初期化するのは、二重の初期化になります。
+しかし、これは、入力を超えた部分に、初期化されていないデータを残すことがあるのに注意ください。-- そしてそれは多くのエラーとセキュリティ侵害の源となってきました。
+
+    constexpr int max = 8 * 1024;
+    int buf[max];         // OK, but suspicious: uninitialized
+    f.read(buf, max);
+
+状況によっては、この配列を初期化するコストは大きいかもしれません。
+しかし、そのような例は実際に、初期化されていないデータをアクセス可能として残す傾向があるので、疑いを持って扱うべきです。
+
+    constexpr int max = 8 * 1024;
+    int buf[max] = {};   // zero all elements; better in some situations
+    f.read(buf, max);
+
 ### <a name="Res-introduce"></a>ES.21: 使う必要が起きる前に変数（あるいは定数）を導入しないこと
 
 ### <a name="Res-init"></a>ES.22: 変数を初期化する値を得る前に変数を宣言しないこと
 
+##### 理由
+
+読みやすさ。変数を使うことができるスコープを制限する。設定される前に使う危険をおかさないこと。初期化は、しばしば、代入よりずっと効率的です。
+
+##### 例、良くない
+
+    string s;
+    // ... no use of s here ...
+    s = "what a waste";
+
+##### 例、良くない
+
+    SomeLargeType var;   // ugly CaMeLcAsEvArIaBlE
+
+    if (cond)   // some non-trivial condition
+        Set(&var);
+    else if (cond2 || !cond3) {
+        var = Set2(3.14);
+    }
+    else {
+        var = 0;
+        for (auto& e : something)
+            var += e;
+    }
+
+    // use var; that this isn't done too early can be enforced statically with only control flow
+
+`SomeLargeType` がそれほど高価でないデフォルト初期化を持つなら、これは問題ではありません。
+そうでない時は、迷路のような条件を通る全ての可能なパスがカバーされたかどうかを、プログラマは心配に思うでしょう。
+カバーされない時は、「設定される前に使う」バグになります。これはメンテナンスのわなです。
+
+訳註。デフォルトコンストラクタが高価であってもなくてもこういうコードは現実には避けられないし、カバレッジの問題は別ですよね。
+
+`const` 変数を含むほどほどの複雑さの初期化のためには、初期化を表すために、ラムダを使うことを考えよう。[ES.28](#Res-lambda-init) を参照。
+
 ### <a name="Res-list"></a>ES.23: `{}` 初期化子シンタックスを選ぼう
+
+##### 例
+
+    int x {f(99)};
+    vector<int> v = {1, 2, 3, 4, 5, 6};
+
+##### 例外
+
+コンテナでは、 `{...}` を要素のリストに、 `(...)` をサイズに使う伝統があります。
+
+    vector<int> v1(10);    // vector of 10 elements with the default value 0
+    vector<int> v2 {10};   // vector of 1 element with the value 10
 
 ### <a name="Res-unique"></a>ES.24: ポインタを持つには `unique_ptr<T>` を使おう
 
@@ -739,6 +902,7 @@ C++17 では、「構造化バインディング」を使って、複数の変�
 ### <a name="Res-nonnegative"></a>ES.106: 符号なしを使うことで、負数を避けようとしないこと
 
 ### <a name="Res-subscripts"></a>ES.107: 添字に符号なしを使わないこと；`gsl::index` を選ぼう 
+
 ### <a name="Rper-reason"></a>Per.1: 理由なしに最適化しないこと
 
 ### <a name="Rper-Knuth"></a>Per.2: 早すぎる最適化はしないこと
@@ -793,22 +957,19 @@ C++17 では、「構造化バインディング」を使って、複数の変�
 
 ##### 注意
 
-Thread safety is challenging, often getting the better of experienced programmers: tooling is an important strategy to mitigate those risks.
-There are many tools "out there", both commercial and open-source tools, both research and production tools.
-Unfortunately people's needs and constraints differ so dramatically that we cannot make specific recommendations,
-but we can mention:
+スレッド安全性は難しいです。経験あるプログラマもしばしば誤ります。ツールを使うのは、これらの危険を緩和するための重要な戦略です。
+「世の中には」商用とオープンソースの両方、研究用と本番用の両方、の多くのツールがあります。
+不幸なことに、人々の要求と制約はあまりにも多岐にわたるため、特定の推奨をすることはできません。しかし、これくらいのコメントはできます：
 
-* 静的強制ツール: both [clang](http://clang.llvm.org/docs/ThreadSafetyAnalysis.html)
-and some older versions of [GCC](https://gcc.gnu.org/wiki/ThreadSafetyAnnotation)
-have some support for static annotation of thread safety properties.
-Consistent use of this technique turns many classes of thread-safety errors into compile-time errors.
-The annotations are generally local (marking a particular member variable as guarded by a particular mutex),
-and are usually easy to learn. However, as with many static tools, it can often present false negatives;
-cases that should have been caught but were allowed.
+* 静的強制ツール:  [clang](http://clang.llvm.org/docs/ThreadSafetyAnalysis.html)
+と、 [GCC](https://gcc.gnu.org/wiki/ThreadSafetyAnnotation) のある古いバージョンは、
+スレッド安全性に関する、いくらかの静的な注釈をサポートします。
+その注釈は一般的にはローカル（特定のメンバ変数が特定の mutex で守られるように印をつける）で、通常は学ぶのが簡単です。
+しかし、多くの静的ツールにあるように、それは、誤ったネガティブ、補足されるべきだが許されるケース、をしばしば起こします。
 
 * 動的強制ツール: Clang の [Thread Sanitizer](http://clang.llvm.org/docs/ThreadSanitizer.html) (TSAN とも呼ばれます)
 は、パワフルな動的ツールの例です。それはあなたのプログラムのビルドと実行を変えて、メモリアクセスの記録を追加します。
-そして、あなたのバイナリのある実行時でのデータ競合を完全に見つけます。
+そして、あなたのバイナリの、ある実行時でのデータ競合を完全に見つけます。
 このためのコストはメモリ（ほとんどの場合、５から１０倍）と、CPU 速度低下（２から２０倍）の両方です。
 このような動的なツールは統合テスト、canary push、あるいは複数のスレッドで動くユニットテストに適用するのが最も適切です。
 ワークロードが重要です：TSAN が問題を見つける時は、それはほぼ常に、実際のデータ競合です。
