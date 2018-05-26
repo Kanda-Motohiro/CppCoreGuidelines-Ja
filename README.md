@@ -18,6 +18,6 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 * ほどほどの人は、規則の意味を考えて取捨選択し、必要な時は新しい規則を作る。
 * 優れた人は、その挙動の全てが、 best practice になる。
 
-# 論語のもじりなのだが、主張は道家みたいになった。
+論語のもじりなのだが、主張は道家みたいになった。
 
 以上
