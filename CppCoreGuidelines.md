@@ -71,6 +71,41 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Ri-unrelated"></a>I.24: 同じ型で関連しないパラメタが隣り合うのを避けよう
 
+##### 理由
+
+同じ型の隣り合った引数は、間違えて逆にしやすいです。
+
+##### 例、良くない
+
+これを考えましょう:
+
+    void copy_n(T* p, T* q, int n);  // copy from [p:p + n) to [q:q + n)
+
+これは、K&R C スタイルインタフェースのやっかいな変種です。"to" と "from" 引数を逆にするのは容易です。
+
+"from" 引数に、`const` を使おう:
+
+    void copy_n(const T* p, T* q, int n);  // copy from [p:p + n) to [q:q + n)
+
+##### 例外
+
+パラメタの順序が重要でないなら、問題はありません。
+
+    int max(int a, int b);
+
+##### 代案
+
+パラメタ型に、 `struct` を定義して、それらのパラメタのフィールドに適切な名前をつけよう。
+
+    struct SystemParams {
+        string config_file;
+        string output_path;
+        seconds timeout;
+    };
+    void initialize(SystemParams p);
+
+こうすることで、この呼び出しを、将来これを読む人に明確にする傾向があります。引数はコール元で、しばしば、名前を使って入れられるためです。
+
 ### <a name="Ri-abstract"></a>I.25: インタフェースには、クラス階層でなく、抽象クラスを選ぼう
 
 ### <a name="Ri-abi"></a>I.26: クロスコンパイラの ABI がほしいなら、 C-スタイルのサブセットを使おう
@@ -152,6 +187,10 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rf-unused"></a>F.9: 使わないパラメタは、無名とするべきです
 
+##### 例
+
+    X* find(map<Blob>& m, const string& s, Hint);   // once upon a time, a hint was used
+
 ### <a name="Rf-conventional"></a>F.15: 情報を伝えるには、単純で普通の方法を選ぼう
 
 ##### 理由
@@ -224,6 +263,42 @@ C++17 では、「構造化バインディング」を使って、複数の変�
 
 ### <a name="Rf-dangle"></a>F.43: ローカルオブジェクトへのポインタあるいは参照は決して（直接、間接を問わす）返さないこと
 
+##### 例、良くない
+
+関数から戻った後は、そのローカルオブジェクトはもう存在しません：
+
+    int* f()
+    {
+        int fx = 9;
+        return &fx;  // BAD
+    }
+
+    void g(int* p)   // looks innocent enough
+    {
+        int gx;
+        cout << "*p == " << *p << '\n';
+        *p = 999;
+        cout << "gx == " << gx << '\n';
+    }
+
+    void h()
+    {
+        int* p = f();
+        int z = *p;  // read from abandoned stack frame (bad)
+        g(p);        // pass pointer to abandoned stack frame to function (bad)
+    }
+
+##### 注意
+
+これは参照にも当てはまります：
+
+    int& f()
+    {
+        int x = 7;
+        // ...
+        return x;  // Bad: returns reference to object that is about to be destroyed
+    }
+
 ### <a name="Rf-return-ref"></a>F.44: コピーが不適切で「オブジェクトを何も返さない」ことを必要としないなら、`T&` を返そう
 
 ### <a name="Rf-return-ref-ref"></a>F.45: `T&&` を返さないこと
@@ -261,6 +336,32 @@ C++17 では、「構造化バインディング」を使って、複数の変�
 ### <a name="Rc-interface"></a>C.3: インタフェースと実装の間の区別を、クラスを使って表そう
 
 ### <a name="Rc-member"></a>C.4: クラスの表現へ直接のアクセスを必要とする時に限って、関数をメンバにしよう
+
+##### 理由
+
+メンバ関数と比べて、カップリングが少ない。オブジェクト状態を変更して、問題を起こす可能性のある関数を少なくできる。表現を変えた後、修正が必要な関数を少なくできる。
+
+##### 例
+
+    class Date {
+        // ... relatively small interface ...
+    };
+
+    // helper functions:
+    Date next_weekday(Date);
+    bool operator==(Date, Date);
+
+「ヘルパー関数」は、`Date` の表現に直接アクセスする必要はありません。
+
+##### 例外
+
+言語は、 `virtual` 関数がメンバであることを要求します。そして、全ての `virtual` 関数が直接データをアクセスするわけではありません。
+特に、抽象クラスのメンバはほぼそうしません。
+参照： [multi-methods](https://parasol.tamu.edu/~yuriys/papers/OMM10.pdf).
+
+##### 例外
+
+言語は、 `=`, `()`, `[]`, と `->` がメンバであることを要求します。
 
 ### <a name="Rc-helper"></a>C.5: ヘルパー関数は、それがサポートするクラスと同じ名前空間に置こう
 
@@ -420,6 +521,35 @@ C++17 では、「構造化バインディング」を使って、複数の変�
 
 ### <a name="Rc-dtor-fail"></a>C.36: デストラクタは失敗しないこと
 
+##### 例
+
+    class X {
+    public:
+        ~X() noexcept;
+        // ...
+    };
+
+    X::~X() noexcept
+    {
+        // ...
+        if (cannot_release_a_resource) terminate();
+        // ...
+    }
+
+##### 注意
+
+多くの人が、デストラクタでの失敗に対処する安全なしかけを発明しようと試みてきました。
+誰も、一般的なしかけを得ることに成功しませんでした。
+これは、本当に現実的な問題となることがあります。例えば、クローズしようとしないソケットはどうしましょう？
+デストラクタを書く人は、なぜデストラクタが呼ばれたか知らないので、例外を投げて「実行を拒否する」ことはできません。
+[discussion](#Sd-dtor) を参照ください。
+問題をさらに悪くすることに、多くの、「クローズ／解放」操作はリトライ不可能です。
+もしなんとか可能なら、クローズ／解放の失敗を基本的な設計の誤りと考えて、終了しましょう。
+
+##### 注意
+
+デストラクタは `noexcept` と宣言しよう。それは、デストラクタが正常に終わるか、プログラムを終了させることを保証します。
+
 ### <a name="Rc-dtor-noexcept"></a>C.37: デストラクタは `noexcept` にしよう
 
 ### <a name="Rc-ctor"></a>C.40: クラスが不変条件を持つなら、コンストラクタを定義しよう
@@ -428,7 +558,7 @@ C++17 では、「構造化バインディング」を使って、複数の変�
 
 ##### 理由
 
-コンストラクタは、クラスの不変条件を確立します。クラスの使用者は、コンストラクトされたオブジェクトが使用可能であることを前提とできるべきです。
+コンストラクタは、クラスの不変条件を確立します。クラスの使用者は、構築されたオブジェクトが使用可能であることを前提とできるべきです。
 
 ##### 例、良くない
 
@@ -491,7 +621,7 @@ C++17 では、「構造化バインディング」を使って、複数の変�
 
     X x; // means X{{}, {}}; that is the empty string and the empty vector
 
-組み込み型は、適切にデフォルトでコンストラクトされないことに注意ください。
+組み込み型は、適切にデフォルトで構築されないことに注意ください。
 
     struct X {
         string s;
@@ -524,7 +654,7 @@ Static に確保された組み込み型のオブジェクトは、デフォル�
 
 クラス内メンバ初期化子を使うと、コンパイラはあなたの代わりに関数を生成します。コンパイラが生成した関数はより効率的なことがあります。
 
-##### Example, bad
+##### 例、良くない
 
     class X1 { // BAD: doesn't use member initializers
         string s;
@@ -534,7 +664,7 @@ Static に確保された組み込み型のオブジェクトは、デフォル�
         // ...
     };
 
-##### Example
+##### 例
 
     class X2 {
         string s = "default";
@@ -550,9 +680,116 @@ Static に確保された組み込み型のオブジェクトは、デフォル�
 
 ### <a name="Rc-in-class-initializer"></a>C.48: 定数を初期化するには、コンストラクタでのメンバ初期化子より、クラス内初期化子を選ぼう
 
+##### 理由
+
+全てのコンストラクタで、同じ値を使うことが期待されることを明示的にします。繰り返しを避けます。メンテナンスの問題を避けます。最も短く、最も効率的なコードになります。
+
+##### 例、良くない
+
+    class X {   // BAD
+        int i;
+        string s;
+        int j;
+    public:
+        X() :i{666}, s{"qqq"} { }   // j is uninitialized
+        X(int ii) :i{ii} {}         // s is "" and j is uninitialized
+        // ...
+    };
+
+メンテナは、`j` が意図的に初期化されていない（いずれにしても、多分、良くない考えです）のか、どうやってわかるでしょう？
+ある場合に、`s` にデフォルト値 `""` を与えて、他のときには `qqq` を与えたのは意図されたことでしょうか（ほぼ間違いなくバグ）？
+`j` の問題（メンバを初期化するのを忘れる）は、既存のクラスに新しいメンバを加える時にしばしば起こります。
+
+##### 例
+
+    class X2 {
+        int i {666};
+        string s {"qqq"};
+        int j {0};
+    public:
+        X2() = default;        // all members are initialized to their defaults
+        X2(int ii) :i{ii} {}   // s and j initialized to their defaults
+        // ...
+    };
+
+**代替策**: コンストラクタへのデフォルト引数で、部分的な効果は得られます。そしてそれは、古いコードではよく見かけました。
+しかし、それはあまり明示的ではなく、より多くの引数を渡す必要があり、一つ以上のコンストラクタがある時は繰り返しが必要です。
+
+    class X3 {   // BAD: inexplicit, argument passing overhead
+        int i;
+        string s;
+        int j;
+    public:
+        X3(int ii = 666, const string& ss = "qqq", int jj = 0)
+            :i{ii}, s{ss}, j{jj} { }   // all members are initialized to their defaults
+        // ...
+    };
+
 ### <a name="Rc-initialize"></a>C.49: コンストラクタでは、代入より初期化を選ぼう
 
+##### Example, good
+
+    class A {   // Good
+        string s1;
+    public:
+        A() : s1{"Hello, "} { }    // GOOD: directly construct
+        // ...
+    };
+
+##### Example, bad
+
+    class B {   // BAD
+        string s1;
+    public:
+        B() { s1 = "Hello, "; }   // BAD: default constructor followed by assignment
+        // ...
+    };
+
+    class C {   // UGLY, aka very bad
+        int* p;
+    public:
+        C() { cout << *p; p = new int{10}; }   // accidental use before initialized
+        // ...
+    };
+
 ### <a name="Rc-factory"></a>C.50: 初期化の間に、「virtual」なふるまいが必要なら、ファクトリ関数を使おう
+
+##### Reason
+
+もし基底クラスオブジェクトの状態が、そのオブジェクトの派生部分の状態に依存しなくてはいけない時は、仮想関数（あるいは同等のもの）を使う必要があります。
+同時に、不完全に構築されたオブジェクトを誤って使う機会のウィンドウを最小にしなくてはいけません。
+
+##### Example
+
+    class B {
+    protected:
+        B() { /* ... */ }              // create an imperfectly initialized object
+
+        virtual void PostInitialize()  // to be called right after construction
+        {
+            // ...
+            f();    // GOOD: virtual dispatch is safe
+            // ...
+        }
+
+    public:
+        virtual void f() = 0;
+
+        template<class T>
+        static shared_ptr<T> Create()  // interface for creating shared objects
+        {
+            auto p = make_shared<T>();
+            p->PostInitialize();
+            return p;
+        }
+    };
+
+    class D : public B { /* ... */ };  // some derived class
+
+    shared_ptr<D> p = D::Create<D>();  // creating a D object
+
+コンストラクタを `protected` にすることで、不完全に構築されたオブジェクトが荒野に逃げ出すのを防ぎます。
+`Create()` ファクトリ関数を提供することで、（フリーストア上の）コンストラクションを便利にします。
 
 ### <a name="Rc-delegating"></a>C.51: クラスの全てのコンストラクタに共通するアクションを表すには、委譲コンストラクタを使おう
 
@@ -580,6 +817,44 @@ Static に確保された組み込み型のオブジェクトは、デフォル�
 
 ### <a name="Rc-ctor-virtual"></a>C.82: コンストラクタとデストラクタで仮想関数を呼ばないこと
 
+##### Reason
+
+呼ばれる関数は、派生クラスがオーバライドしたかもしれない関数でなく、これまでに構築されたオブジェクトのものとなるでしょう。
+これはとても混乱させます。
+さらに悪いことに、未実装の純粋仮想関数を、コンストラクタあるいはデストラクタから直接あるいは間接的に呼ぶことは、未定義の振る舞いとなります。
+
+##### Example, bad
+
+    class Base {
+    public:
+        virtual void f() = 0;   // not implemented
+        virtual void g();       // implemented with Base version
+        virtual void h();       // implemented with Base version
+    };
+
+    class Derived : public Base {
+    public:
+        void g() override;   // provide Derived implementation
+        void h() final;      // provide Derived implementation
+
+        Derived()
+        {
+            // BAD: attempt to call an unimplemented virtual function
+            f();
+
+            // BAD: will call Derived::g, not dispatch further virtually
+            g();
+
+            // GOOD: explicitly state intent to call only the visible version
+            Derived::g();
+
+            // ok, no qualification needed, h is final
+            h();
+        }
+    };
+
+明示的に修飾された特定の関数を呼ぶことは、その関数が `virtual` であっても、仮想呼び出しではないことに注意ください。
+
 ### <a name="Rc-swap"></a>C.83: 値型のような型では、 `noexcept` swap 関数を提供することを考慮しよう
 
 ### <a name="Rc-swap-fail"></a>C.84: `swap` 関数は失敗しないこと
@@ -602,6 +877,24 @@ Static に確保された組み込み型のオブジェクトは、デフォル�
 
 ### <a name="Rh-dtor"></a>C.127: 仮想関数を持つクラスは、virtual あるいは protected デストラクタを持つべきです
 
+##### Example, bad
+
+    struct B {
+        virtual int f() = 0;
+        // ... no user-written destructor, defaults to public nonvirtual ...
+    };
+
+    // bad: derived from a class without a virtual destructor
+    struct D : B {
+        string s {"default"};
+    };
+
+    void use()
+    {
+        unique_ptr<B> p = make_unique<D>();
+        // ...
+    } // undefined behavior. May call B::~B only and leak the string
+
 ### <a name="Rh-override"></a>C.128: 仮想関数は、`virtual`, `override`, あるいは `final` の１つだけを必ず指定するべきです
 
 ### <a name="Rh-kind"></a>C.129: クラス階層を設計する時、実装の継承とインタフェースの継承を区別しよう
@@ -610,7 +903,52 @@ Static に確保された組み込み型のオブジェクトは、デフォル�
 
 ### <a name="Rh-get"></a>C.131: 自明な getter と setter を避けよう
 
+##### Example
+
+    class Point {   // Bad: verbose
+        int x;
+        int y;
+    public:
+        Point(int xx, int yy) : x{xx}, y{yy} { }
+        int get_x() const { return x; }
+        void set_x(int xx) { x = xx; }
+        int get_y() const { return y; }
+        void set_y(int yy) { y = yy; }
+        // no behavioral member functions
+    };
+
+このようなクラスは、 `struct` にすることを考えましょう。-- つまり、振る舞いを持たない、変数の集まりで、全てが public データでメンバ関数がなし、です。
+
+    struct Point {
+        int x {0};
+        int y {0};
+    };
+
+##### Note
+
+この規則の鍵は、getter/setter セマンティクスが自明かどうかです。以下は「自明」の完全な定義ではありませんが、getter/setter の代わりに public データメンバであったら、シンタックス以外で何か違いがあるかを考えましょう。自明でないセマンティクスの例は：クラス不変条件を維持する、あるいは、内部的な型と、インタフェース型を変換するなど。
+
 ### <a name="Rh-virtual"></a>C.132: 関数を意味なく仮想とするのはやめよう
+
+##### Reason
+
+冗長な `virtual` は、実行時間とオブジェクトコードの大きさを増します。
+仮想関数はオーバライドされる可能性があり、このため、派生クラスでの誤りにさらされます。
+仮想関数はテンプレート階層中で、必ずコードの複製を起こします。
+
+##### Example, bad
+
+    template<class T>
+    class Vector {
+    public:
+        // ...
+        virtual int size() const { return sz; }   // bad: what good could a derived class do?
+    private:
+        T* elem;   // the elements
+        int sz;    // number of elements
+    };
+
+この種の "vector" はそもそも、基底クラスとして使われることは意図されていません。
 
 ### <a name="Rh-protected"></a>C.133: `protected` データを避けよう
 
@@ -627,6 +965,26 @@ Static に確保された組み込み型のオブジェクトは、デフォル�
 ### <a name="Rh-final"></a>C.139: `final` はほどほどに使おう
 
 ### <a name="Rh-poly"></a>C.145: 多相的なオブジェクトは、ポインタと参照を使ってアクセスしよう
+
+##### Example
+
+    struct B { int a; virtual int f(); };
+    struct D : B { int b; int f() override; };
+
+    void use(B b)
+    {
+        D d;
+        B b2 = d;   // slice
+        B b3 = b;
+    }
+
+    void use2()
+    {
+        D d;
+        use(d);   // slice
+    }
+
+`d` はどちらもスライスされます。
 
 ### <a name="Rh-dynamic_cast"></a>C.146: クラス階層を横断することが避けられない時は `dynamic_cast` を使おう
 
@@ -656,6 +1014,19 @@ Static に確保された組み込み型のオブジェクトは、デフォル�
     }
 
 ### <a name="Rh-array"></a>C.152: 決して、派生クラスのオブジェクトの配列へのポインタを、その基底へのポインタに代入しないこと
+
+##### Example
+
+    struct B { int x; };
+    struct D : B { int y; };
+
+    void use(B*);
+
+    D a[] = {{1, 2}, {3, 4}, {5, 6}};
+    B* p = a;     // bad: a decays to &a[0] which is converted to a B*
+    p[1].x = 7;   // overwrite D[0].y
+
+    use(a);       // bad: a decays to &a[0] which is converted to a B*
 
 ### <a name="Rh-use-virtual"></a>C.153: キャストより仮想関数を選ぼう
 
@@ -712,6 +1083,16 @@ Static に確保された組み込み型のオブジェクトは、デフォル�
 
 ### <a name="Renum-value"></a>Enum.8: 列挙子の値を指定するのはその必要があるときだけにしよう
 
+##### Example
+
+    enum class Col1 { red, yellow, blue };
+    enum class Col2 { red = 1, yellow = 2, blue = 2 }; // typo
+    enum class Month { jan = 1, feb, mar, apr, may, jun,
+                       jul, august, sep, oct, nov, dec }; // starting with 1 is conventional
+    enum class Base_flag { dec = 1, oct = dec << 1, hex = dec << 2 }; // set of bits
+
+慣用的な値（例えば、`Month`）に合わせる時と、連続した値ではいけない場合（例えば、`Base_flag` での別々のビット）は、値を指定する必要があります。
+
 ### <a name="Rr-raii"></a>R.1: 資源ハンドルとRAII (Resource Acquisition Is Initialization、資源獲得時初期化)を使って資源を自動的に管理しよう
 
 ### <a name="Rr-use-ptr"></a>R.2: インタフェースでは、個々のオブジェクトを指定するために生のポインタを使おう（その時に限り）
@@ -721,6 +1102,25 @@ Static に確保された組み込み型のオブジェクトは、デフォル�
 ### <a name="Rr-ref"></a>R.4: 生の参照 (`T&`) は所有を示しません
 
 ### <a name="Rr-scoped"></a>R.5: スコープのあるオブジェクトを選ぼう；不必要なヒープからの確保はやめよう
+
+##### Example
+
+以下の例は非効率（不要な確保と解放があるため）で、`...` の部分で例外が投げられたあるいは return された場合に脆弱（リークになります）で、冗長です。
+
+    void f(int n)
+    {
+        auto p = new Gadget{n};
+        // ...
+        delete p;
+    }
+
+その代わり、ローカル変数を使おう：
+
+    void f(int n)
+    {
+        Gadget g{n};
+        // ...
+    }
 
 ### <a name="Rr-global"></a>R.6: `const` でないグローバル変数を避けよう
 
@@ -787,6 +1187,36 @@ Static に確保された組み込み型のオブジェクトは、デフォル�
 
 ### <a name="Rr-smartptrget"></a>R.37: エイリアスしたスマートポインタから得たポインタあるいは参照を渡さないこと
 
+##### Example
+
+このコードを考えましょう:
+
+    // global (static or heap), or aliased local ...
+    shared_ptr<widget> g_p = ...;
+
+    void f(widget& w)
+    {
+        g();
+        use(w);  // A
+    }
+
+    void g()
+    {
+        g_p = ...; // oops, if this was the last shared_ptr to that widget, destroys the widget
+    }
+
+以下はコードレビューを通るべきではありません:
+
+    void my_code()
+    {
+        // BAD: passing pointer or reference obtained from a nonlocal smart pointer
+        //      that could be inadvertently reset somewhere inside f or it callees
+        f(*g_p);
+
+        // BAD: same reason, just passing it as a "this" pointer
+         g_p->func();
+    }
+
 ### <a name="Res-lib"></a>ES.1: 他のライブラリや「手作りコード」より標準ライブラリを選ぼう
 
 ### <a name="Res-abstr"></a>ES.2: 言語機能を直接使うより、適切な抽象化を選ぼう
@@ -804,6 +1234,31 @@ Static に確保された組み込み型のオブジェクトは、デフォル�
 ### <a name="Res-name-one"></a>ES.10: 一つの宣言では一つ（だけ）名前を宣言しよう
 
 ### <a name="Res-auto"></a>ES.11: 型名の冗長な繰り返しを避けるため `auto` を使おう
+
+##### Example
+
+これを見て:
+
+    auto p = v.begin();   // vector<int>::iterator
+    auto h = t.future();
+    auto q = make_unique<int[]>(s);
+    auto f = [](int x){ return x + 10; };
+
+どの場合も、長くて、覚えるのが大変で、コンパイラは既に知っているのにプログラマが間違える可能性のある型を書かなくて済みます。
+
+##### Example
+
+    template<class T>
+    auto Container<T>::first() -> Iterator;   // Container<T>::Iterator
+
+##### Exception
+
+初期化リストで、あなたが正確に自分がほしい型を知っていて、初期化子が変換を必要とすることがある場合には、`auto` を避けよう。
+
+##### Example
+
+    auto lst = { 1, 2, 3 };   // lst is an initializer list
+    auto x{1};   // x is an int (after correction of the C++14 standard; initializer_list in C++11)
 
 ### <a name="Res-reuse"></a>ES.12: ネストしたスコープ内で名前を再使用しないこと
 
@@ -920,6 +1375,10 @@ Static に確保された組み込み型のオブジェクトは、デフォル�
 
 ### <a name="Res-macros"></a>ES.30: プログラムテキストを操作するためにマクロを使わないこと
 
+##### Example, bad
+
+    #define Case break; case   /* BAD */
+
 ### <a name="Res-macros2"></a>ES.31: 定数や「関数」のためにマクロを使わないこと
 
 ### <a name="Res-ALL_CAPS"></a>ES.32: マクロ名には `ALL_CAPS` 、全て大文字、を使おう
@@ -954,6 +1413,25 @@ Static に確保された組み込み型のオブジェクトは、デフォル�
 
 ### <a name="Res-move"></a>ES.56: `std::move()` は、オブジェクトを明示的に他のスコープに移動する必要のある時だけ使おう
 
+##### Example, bad
+
+    vector<int> make_vector() {
+        vector<int> result;
+        // ... load result with data
+        return std::move(result);       // bad; just write "return result;"
+    }
+
+決して、 `return move(local_variable);` と書かないこと。なぜならば言語は既にその変数がムーブ候補であることを知っているからです。
+このコードで `move` を書いても役に立ちません。そして実際に、有害です。
+コンパイラによっては、それは、ローカル変数への余分な参照エイリアスを作ることによって、RVO (the return value optimization) と干渉するからです。
+
+##### Example, bad
+
+    vector<int> v = std::move(make_vector());   // bad; the std::move is entirely redundant
+
+`f` が値を戻す時、決して、`x = move(f());` のように、戻される値に対して `move` を書かないこと。
+言語は既に、戻される値が一時オブジェクトであり、moved from することができることを知っています。
+
 ### <a name="Res-new"></a>ES.60: 資源管理関数の外での `new` と `delete` を避けよう
 
 ### <a name="Res-del"></a>ES.61: 配列は `delete[]` で削除し、配列でないものは `delete` で削除しよう
@@ -976,7 +1454,25 @@ Static に確保された組み込み型のオブジェクトは、デフォル�
 
 ### <a name="Res-for-init"></a>ES.74: `for` 文の初期化部分でループ変数を宣言するようにしよう
 
+##### Example
+
+    for (int i = 0; i < 100; ++i) {   // GOOD: i var is visible only inside the loop
+        // ...
+    }
+
+##### Example, don't
+
+    int j;                            // BAD: j is visible outside the loop
+    for (j = 0; j < 100; ++j) {
+        // ...
+    }
+    // j is still visible here and isn't needed
+
 ### <a name="Res-do"></a>ES.75: `do` 文を避けよう
+
+##### Note
+
+はい。`do` 文が、解決策を明確に表すことを示すちゃんとした例はあります。しかし、多くのバグの元でもあります。
 
 ### <a name="Res-goto"></a>ES.76: `goto` を避けよう
 
@@ -1002,9 +1498,49 @@ Static に確保された組み込み型のオブジェクトは、デフォル�
 
 ### <a name="Res-empty"></a>ES.85: 空の文は目立つようにしよう
 
+##### Example
+
+    for (i = 0; i < max; ++i);   // BAD: the empty statement is easily overlooked
+    v[i] = f(v[i]);
+
+    for (auto x : v) {           // better
+        // nothing
+    }
+    v[i] = f(v[i]);
+
 ### <a name="Res-loop-counter"></a>ES.86: 生の for ループの本体内で、ループ制御変数を変更するのは避けよう
 
+##### Example
+
+    for (int i = 0; i < 10; ++i) {
+        // no updates to i -- ok
+    }
+
+    for (int i = 0; i < 10; ++i) {
+        //
+        if (/* something */) ++i; // BAD
+        //
+    }
+
+    bool skip = false;
+    for (int i = 0; i < 10; ++i) {
+        if (skip) { skip = false; continue; }
+        //
+        if (/* something */) skip = true;  // Better: using two variable for two concepts.
+        //
+    }
+
 ### <a name="Res-if"></a>ES.87: 条件に冗長な `==` あるいは `!=` をつけないこと
+
+##### Example
+
+定義により、 `if` 文, `while` 文, あるいは `for`- 文にある条件は、 `true` と `false` のいずれかを選びます。
+数型は `0` と比較され、ポインタ型は `nullptr` と比較されます。
+
+    // These all mean "if `p` is not `nullptr`"
+    if (p) { ... }            // good
+    if (p != 0) { ... }       // redundant `!=0`; bad: don't use 0 for pointers
+    if (p != nullptr) { ... } // redundant `!=nullptr`, not recommended
 
 ### <a name="Res-mix"></a>ES.100: 符号ありと符号なしの算術を混ぜないこと
 
@@ -1059,6 +1595,24 @@ Static に確保された組み込み型のオブジェクトは、デフォル�
 性能は、典型的には、メモリアクセス時間が支配的だから。
 
 ### <a name="Rper-access"></a>Per.19: 予測可能なようにメモリアクセスをしよう
+
+##### Reason
+
+性能はキャッシュ性能にとても敏感で、キャッシュアルゴリズムは連続したデータへの単純（通常は線形）なアクセスを好みます。
+
+##### Example
+
+    int matrix[rows][cols];
+
+    // bad
+    for (int c = 0; c < cols; ++c)
+        for (int r = 0; r < rows; ++r)
+            sum += matrix[r][c];
+
+    // good
+    for (int r = 0; r < rows; ++r)
+        for (int c = 0; c < cols; ++c)
+            sum += matrix[r][c];
 
 ### <a name="Rper-context"></a>Per.30: クリティカルなパスではコンテキストスイッチを避けよう
 
@@ -1160,6 +1714,28 @@ Static に確保された組み込み型のオブジェクトは、デフォル�
 
 ### <a name="Re-errors"></a>E.3: 例外はエラー処理にだけ使おう
 
+##### Reason
+
+エラー処理を、「普通のコード」と分離するため。
+C++ 実装は、例外がまれであるという前提で最適化されている傾向があります。
+
+##### Example, don't
+
+    // don't: exception not used for error handling
+    int find_index(vector<string>& vec, const string& x)
+    {
+        try {
+            for (gsl::index i = 0; i < vec.size(); ++i)
+                if (vec[i] == x) throw i;  // found x
+        } catch (int i) {
+            return i;
+        }
+        return -1;   // not found
+    }
+
+これは、明らかな代替策と比べてより複雑で、ほぼ確実に、ずっと遅く走るでしょう。
+`vector` で値を探すことに関して、例外的なことは何もありません。
+
 ### <a name="Re-design-invariants"></a>E.4: 不変条件に関して、あなたのエラー処理戦略を設計しよう
 
 ### <a name="Re-invariant"></a>E.5: コンストラクタに不変条件を確立させよう。それができない時は例外を投げさせよう
@@ -1177,11 +1753,71 @@ Static に確保された組み込み型のオブジェクトは、デフォル�
 
 ### <a name="Re-exception-types"></a>E.14: 例外の型は、目的のために設計されたユーザ定義型（ビルトイン型でなく）を使おう
 
+##### Example, don't
+
+    void my_code()     // Don't
+    {
+        // ...
+        throw 7;       // 7 means "moon in the 4th quarter"
+        // ...
+    }
+
+    void your_code()   // Don't
+    {
+        try {
+            // ...
+            my_code();
+            // ...
+        }
+        catch(int i) {  // i == 7 means "input buffer too small"
+            // ...
+        }
+    }
+
 ### <a name="Re-exception-ref"></a>E.15: 階層からの例外は参照で捕捉しよう
+
+##### Example
+
+    void f()
+    {
+        try {
+            // ...
+        }
+        catch (exception e) {   // don't: may slice
+            // ...
+        }
+    }
+
+その代わりに、参照を使おう:
+
+    catch (exception& e) { /* ... */ }
+
+あるいは、典型的には `const` 参照のほうがいい:
+
+    catch (const exception& e) { /* ... */ }
 
 ### <a name="Re-never-fail"></a>E.16: デストラクタ、解放、 `swap` は決して失敗しないこと
 
 ### <a name="Re-not-always"></a>E.17: 全ての関数で全ての例外を捕捉しようと試みないこと
+
+##### Reason
+
+意味のある回復アクションができない関数で例外を捕捉することは、複雑さとムダにつながります。
+例外は、それを処理できる関数に届くまで、伝搬させましょう。
+巻き戻るパスでの後始末アクションは、[RAII](#Re-raii) にさせましょう。
+
+##### Example, don't
+
+    void f()   // bad
+    {
+        try {
+            // ...
+        }
+        catch (...) {
+            // no action
+            throw;   // propagate exception
+        }
+    }
 
 ### <a name="Re-catch"></a>E.18: 明示的な `try/catch` の使用は最小にしよう
 
@@ -1198,6 +1834,23 @@ Static に確保された組み込み型のオブジェクトは、デフォル�
 ### <a name="Re-specifications"></a>E.30: exception specification は使わないこと
 
 ### <a name="Re_catch"></a>E.31: `catch` 節は正しい順序にしよう
+
+##### Example
+
+    void f()
+    {
+        // ...
+        try {
+                // ...
+        }
+        catch (Base& b) { /* ... */ }
+        catch (Derived& d) { /* ... */ }
+        catch (...) { /* ... */ }
+        catch (std::exception& e){ /* ... */ }
+    }
+
+`Derived`が `Base` から派生しているなら、 `Derived` ハンドラは決して呼ばれません。
+"全てをキャッチする" ハンドラは、 `std::exception` ハンドラが決して呼ばれないことを保証します。
 
 ### <a name="Rconst-immutable"></a>Con.1: デフォルトで、オブジェクトは変更不可能としよう
 
@@ -1506,12 +2159,33 @@ Static に確保された組み込み型のオブジェクトは、デフォル�
 
 ### <a name="Rl-misread"></a>NL.19: 読み間違いをしやすい名前を避けよう
 
+##### Example
+
+    int oO01lL = 6; // bad
+
+    int splunk = 7;
+    int splonk = 8; // bad: splunk and splonk are easily confused
+
 ### <a name="Rl-stmt"></a>NL.20: 同じ行に２つの文を置かないこと
 
 ### <a name="Rl-dcl"></a>NL.21: 一つの宣言には、一つの名前（だけ）を宣言しよう
 
 ### <a name="Rl-void"></a>NL.25: `void` は引数型に使わないこと
 
+##### Example
+
+    void f(void);   // bad
+
+    void g();       // better
+
 ### <a name="Rl-const"></a>NL.26: 慣用的な `const` ノーテーションを使おう
+
+##### Example
+
+    const int x = 7;    // OK
+    int const y = 9;    // bad
+
+    const int *const p = nullptr;   // OK, constant pointer to constant int
+    int const *const p = nullptr;   // bad, constant pointer to constant int
 
 終わり
