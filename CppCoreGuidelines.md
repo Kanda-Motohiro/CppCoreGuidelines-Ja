@@ -663,6 +663,15 @@ Static に確保された組み込み型のオブジェクトは、デフォル�
 
 ### <a name="Ro-symmetric"></a>C.161: 対称的な操作のため、メンバでない関数を使おう
 
+##### 理由
+
+メンバ関数を使うと、２つのことが必要です。
+例えば、 `==` の場合、 `a == b` と `b == a` は、微妙に違います。
+
+##### 例
+
+    bool operator==(Point a, Point b) { return a.x == b.x && a.y == b.y; }
+
 ### <a name="Ro-equivalent"></a>C.162: ほぼ等しい操作は多重定義しよう
 
 ### <a name="Ro-equivalent-2"></a>C.163: ほぼ等しい操作だけを多重定義しよう
