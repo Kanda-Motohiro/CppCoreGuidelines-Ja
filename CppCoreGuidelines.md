@@ -166,6 +166,8 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 訳註。引数があれば、ファイル、なければ、標準入力、というのは、よくあるのに、C++ で書きにくいのは有名らしく、私もはまった結果、引数を評価した後で、rdbuf を入れ直す、というトリックを教わりました。
 
+# <a name="S-functions"></a>F: Functions 関数
+
 ### <a name="Rf-package"></a>F.1: 意味のある操作を注意深く名前を付けた関数に「パッケージ」しよう
 
 ### <a name="Rf-logical"></a>F.2: 一つの関数は一つの論理的な操作をするべきです
@@ -332,6 +334,8 @@ C++17 では、「構造化バインディング」を使って、複数の変�
 ### <a name="Rf-this-capture"></a>F.54: `this` を捕捉するなら、明示的に全ての変数を捕捉しよう（デフォルト補足はなし）
 
 ### <a name="F-varargs"></a>F.55: `va_arg` 引数を使わないこと
+
+# <a name="S-class"></a>C: Classes and class hierarchies クラスとクラス階層
 
 ### <a name="Rc-org"></a>C.1: 関連するデータは構造にまとめよう (構造体あるいはクラス)
 
@@ -1071,6 +1075,8 @@ Static に確保された組み込み型のオブジェクトは、デフォル�
 
 ### <a name="Ru-pun"></a>C.183: `union` を使って型変換をしないこと
 
+# <a name="S-enum"></a>Enum: Enumerations 列挙子
+
 ### <a name="Renum-macro"></a>Enum.1: マクロより列挙子を選ぼう
 
 ### <a name="Renum-set"></a>Enum.2: 関連する、名前がついた定数のセットを表すために列挙子を使おう
@@ -1096,6 +1102,8 @@ Static に確保された組み込み型のオブジェクトは、デフォル�
     enum class Base_flag { dec = 1, oct = dec << 1, hex = dec << 2 }; // set of bits
 
 慣用的な値（例えば、`Month`）に合わせる時と、連続した値ではいけない場合（例えば、`Base_flag` での別々のビット）は、値を指定する必要があります。
+
+# <a name="S-resource"></a>R: Resource management 資源管理
 
 ### <a name="Rr-raii"></a>R.1: 資源ハンドルとRAII (Resource Acquisition Is Initialization、資源獲得時初期化)を使って資源を自動的に管理しよう
 
@@ -1220,6 +1228,8 @@ Static に確保された組み込み型のオブジェクトは、デフォル�
         // BAD: same reason, just passing it as a "this" pointer
          g_p->func();
     }
+
+# <a name="S-expr"></a>ES: Expressions and statements 式と文
 
 ### <a name="Res-lib"></a>ES.1: 他のライブラリや「手作りコード」より標準ライブラリを選ぼう
 
@@ -1646,6 +1656,8 @@ Static に確保された組み込み型のオブジェクトは、デフォル�
 
 ### <a name="Res-subscripts"></a>ES.107: 添字に符号なしを使わないこと；`gsl::index` を選ぼう 
 
+# <a name="S-performance"></a>Per: Performance 性能
+
 ### <a name="Rper-reason"></a>Per.1: 理由なしに最適化しないこと
 
 ### <a name="Rper-Knuth"></a>Per.2: 早すぎる最適化はしないこと
@@ -1703,6 +1715,8 @@ Static に確保された組み込み型のオブジェクトは、デフォル�
             sum += matrix[r][c];
 
 ### <a name="Rper-context"></a>Per.30: クリティカルなパスではコンテキストスイッチを避けよう
+
+# <a name="S-concurrency"></a>CP: Concurrency and parallelism 同時実行と並列性
 
 ### <a name="Rconc-multi"></a>CP.1: コードがマルチスレッドプログラムの一部として実行するかもしれないことを前提としよう
 
@@ -1795,6 +1809,8 @@ Static に確保された組み込み型のオブジェクトは、デフォル�
 ### <a name="Rconc-volatile2"></a>CP.200: `volatile` を使うのは、C++ でないメモリと話す時だけにしよう
 
 ### <a name="Rconc-signal"></a>CP.201: ??? シグナル
+
+# <a name="S-errors"></a>E: Error handling エラー処理
 
 ### <a name="Re-design"></a>E.1: 設計の初期に、エラー処理戦略を決めよう
 
@@ -1940,6 +1956,8 @@ C++ 実装は、例外がまれであるという前提で最適化されてい�
 `Derived`が `Base` から派生しているなら、 `Derived` ハンドラは決して呼ばれません。
 "全てをキャッチする" ハンドラは、 `std::exception` ハンドラが決して呼ばれないことを保証します。
 
+# <a name="S-const"></a>Con: Constants and immutability 定数と不変性
+
 ### <a name="Rconst-immutable"></a>Con.1: デフォルトで、オブジェクトは変更不可能としよう
 
 ### <a name="Rconst-fct"></a>Con.2: デフォルトで、メンバ関数は `const` としよう
@@ -1949,6 +1967,8 @@ C++ 実装は、例外がまれであるという前提で最適化されてい�
 ### <a name="Rconst-const"></a>Con.4: 生成された後は値が変わらないオブジェクトを定義するために `const` を使おう
 
 ### <a name="Rconst-constexpr"></a>Con.5: コンパイル時に計算できる値のために `constexpr` を使おう
+
+# <a name="S-templates"></a>T: Templates and generic programming テンプレートとジェネリックプログラミング
 
 ### <a name="Rt-raise"></a>T.1: テンプレートを使って、コードの抽象化のレベルを上げよう
 
@@ -2058,11 +2078,15 @@ C++ 実装は、例外がまれであるという前提で最適化されてい�
 
 ### <a name="Rt-check-class"></a>T.150: `static_assert` を使って、クラスがコンセプトにあっているか確認しよう
 
+# <a name="S-cpl"></a>CPL: C-style programming C-スタイルのプログラミング
+
 ### <a name="Rcpl-C"></a>CPL.1: C より C++ を選ぼう
 
 ### <a name="Rcpl-subset"></a>CPL.2: C を使わなくてはいけない時は、 C と C++ の共通サブセットを使い、 C コードを C++ としてコンパイルしよう
 
 ### <a name="Rcpl-interface"></a>CPL.3: インタフェースに C を使わなくてはいけない時は、それを呼び出すコードで C++ を使おう
+
+# <a name="S-source"></a>SF: Source files ソースファイル
 
 ### <a name="Rs-file-suffix"></a>SF.1: あなたのプロジェクトが既に他の慣例に従っていないなら、コードファイルには `.cpp` サフィックスを、インタフェースファイルに `.h` を使おう
 
@@ -2109,6 +2133,8 @@ C++ 実装は、例外がまれであるという前提で最適化されてい�
 ### <a name="Rs-unnamed"></a>SF.21: ヘッダでは名前無し (anonymous) 名前空間を使わないこと
 
 ### <a name="Rs-unnamed2"></a>SF.22: 全ての内部的／エクスポートされない要素のために、名前無し (anonymous) 名前空間を使おう
+
+# <a name="S-stdlib"></a>SL: The Standard Library 標準ライブラリ
 
 ### <a name="Rsl-lib"></a>SL.1:  可能な時はいつでも、ライブラリを使おう
 
@@ -2163,11 +2189,15 @@ C++ 実装は、例外がまれであるという前提で最適化されてい�
 
 ### <a name="Rclib-jmp"></a>SL.C.1: setjmp/longjmp は使わないこと
 
+# <a name="S-A"></a>A: Architectural ideas アーキテクチャ上の概念
+
 ### <a name="Ra-stable"></a>A.1: コードの安定した部分をあまりそうでない部分と分離しよう
 
 ### <a name="Ra-lib"></a>A.2: 潜在的に再利用可能な部分はライブラリとして表そう
 
 ### <a name="Ra-dag"></a>A.4: ライブラリ間に循環は無いべきです
+
+# <a name="S-not"></a>NR: Non-Rules and myths 規則ではないものと神話
 
 ### <a name="Rnr-top"></a>NR.1: ダメ：全ての宣言は関数の先頭にあるべきです
 
@@ -2216,6 +2246,8 @@ Core Guidelines サポートライブラリは `gsl` 名前空間で定義され
 GSL はヘッダオンリィで、 [GSL: Guideline support library](https://github.com/Microsoft/GSL) にあります。
 
 訳註。owner, span, zstring, Expects finally, joining_thread などはこのヘッダで定義されています。
+
+# <a name="S-naming"></a>NL: Naming and layout rules 名前付けとレイアウトの規則
 
 ### <a name="Rl-comments"></a>NL.1: コードで明確に書けることをコメントで言わないこと
 
