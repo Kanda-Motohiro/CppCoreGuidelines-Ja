@@ -3,6 +3,8 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 以下は、C++ Core Guidelines （のほぼ規則のタイトルだけ）を訳したものです。ライセンスファイルによれば、訳をこのように公開することは不可能なのですが、引用したイシューでは、許可されているようです。私が興味のある部分だけを訳しています。
 
+# <a name="S-philosophy"></a>P: Philosophy 哲学
+
 ### <a name="Rp-direct"></a>P.1: アイディアは直接コードで表現しよう
 
 ### <a name="Rp-Cplusplus"></a>P.2: ISO Standard C++ で書こう
@@ -28,6 +30,8 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 ### <a name="Rp-tools"></a>P.12: 適切にサポートツールを使おう
 
 ### <a name="Rp-lib"></a>P.13: 適切にサポートライブラリを使おう
+
+# <a name="S-interfaces"></a>I: Interfaces インタフェース
 
 ### <a name="Ri-explicit"></a>I.1: インタフェースは明示的にしよう
 
@@ -136,7 +140,7 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
     if (owned) delete inp;
 
 この特定の例は、`cin` に対しては何もしない特別の deleter を持つ `unique_ptr` を使って解決することができます。
-しかしそれは、（この問題に必ずぶつかる）初心者には複雑です。
+しかしそれは、（この問題に容易にぶつかる）初心者には複雑です。
 そしてこの例は、静的と考えたい属性（今の場合、所有権）が、たまに、実行時に解決されなくてはいけないことがあるという、より一般的な問題の例です。
 一般的で、最もひんぱんで、最も安全な例は、静的に解決することができます。なので、これにコストと複雑性を加えたくはありません。
 しかし、一般的でなく、あまり安全でなく、必然的により高価なケースにも対応しなくてはいけません。
@@ -1988,7 +1992,7 @@ C++ 実装は、例外がまれであるという前提で最適化されてい�
 
 ### <a name="Rt-deduce"></a>T.44: クラステンプレートの引数型を推論するために、関数テンプレートを使おう（可能ならば）
 
-### <a name="Rt-regular"></a>T.46: テンプレートの引数は少なくても、 `Regular` あるいは Semi`Regular` であることを要求しよう
+### <a name="Rt-regular"></a>T.46: テンプレートの引数は少なくても、 `Regular` あるいは `Semi Regular` であることを要求しよう
 
 ### <a name="Rt-visible"></a>T.47: 一般的な名前を持った、高度に visible で制約されないテンプレートを避けよう
 
@@ -2294,6 +2298,12 @@ GSL はヘッダオンリィで、 [GSL: Guideline support library](https://gith
 
     const int *const p = nullptr;   // OK, constant pointer to constant int
     int const *const p = nullptr;   // bad, constant pointer to constant int
+
+# <a name="S-faq"></a>FAQ: しばしば問われる質問の答え
+
+### <a name="Faq-boost"></a>FAQ.53: なぜ、 GSL の型は Boost を通して提案されなかったのですか？
+
+なぜならば、私達はこれらをすぐに使いたいからです。そして、それらは一時的なものなので、同じ要求を満たす型が標準ライブラリに存在したらすぐに引退させたいからです。
 
 ### <a name="Faq-gsl-iso"></a>FAQ.54: GSL (guideline support library) は、 ISO C++ 標準化委員会によって認可されましたか？
 

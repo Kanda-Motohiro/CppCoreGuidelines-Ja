@@ -1,5 +1,6 @@
 # CppCoreGuidelines-Ja
 Japanese translation of rule titles from "C++ Core Guidelines"
+
 C++ Core Guidelines の日本語訳
 
 Here is a Japanese translation of (mostly only) rule titles (for now) from [C++ Core Guidelines](https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md) as of April 16, 2018 by kanda.motohiro@gmail.com. This translation is disributed under the [LICENSE](https://github.com/isocpp/CppCoreGuidelines/blob/master/LICENSE).
