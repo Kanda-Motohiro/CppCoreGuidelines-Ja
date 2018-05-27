@@ -1,7 +1,7 @@
 Here is a Japanese translation of (mostly only) rule titles (for now) from [C++ Core Guidelines](https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md) as of April 16, 2018 by kanda.motohiro@gmail.com. This translation is disributed under the [LICENSE](https://github.com/isocpp/CppCoreGuidelines/blob/master/LICENSE).
 The LICENSE is very restrictive but according to this [issue discussion on translation](https://github.com/isocpp/CppCoreGuidelines/issues/1065), publishing a translation is permitted.
 
-以下は、C++ Core Guidelines の規則の（ほぼ）タイトルだけを訳したものです。ライセンスファイルによれば、訳をこのように公開することは不可能なのですが、引用したイシューでは、許可されているようです。
+以下は、C++ Core Guidelines （のほぼ規則のタイトルだけ）を訳したものです。ライセンスファイルによれば、訳をこのように公開することは不可能なのですが、引用したイシューでは、許可されているようです。私が興味のある部分だけを訳しています。
 
 ### <a name="Rp-direct"></a>P.1: アイディアは直接コードで表現しよう
 
@@ -1345,7 +1345,7 @@ Static に確保された組み込み型のオブジェクトは、デフォル�
 そうでない時は、迷路のような条件を通る全ての可能なパスがカバーされたかどうかを、プログラマは心配に思うでしょう。
 カバーされない時は、「設定される前に使う」バグになります。これはメンテナンスのわなです。
 
-訳註。デフォルトコンストラクタが高価であってもなくてもこういうコードは現実には避けられないし、カバレッジの問題は別ですよね。
+訳註。デフォルトコンストラクタが高価であってもなくてもこういうコードは現実には避けられないし、カバレッジの問題は別ですよね。外のスコープで unique_ptr を宣言して、 if 文の中で new で構築すれば？
 
 `const` 変数を含むほどほどの複雑さの初期化のためには、初期化を表すために、ラムダを使うことを考えよう。[ES.28](#Res-lambda-init) を参照。
 
@@ -1413,6 +1413,75 @@ Static に確保された組み込み型のオブジェクトは、デフォル�
 
 ### <a name="Res-move"></a>ES.56: `std::move()` は、オブジェクトを明示的に他のスコープに移動する必要のある時だけ使おう
 
+##### Reason
+
+複製を避け、性能を上げるために、コピーではなくムーブを使います。
+
+ムーブは典型的には、空のオブジェクト([C.64](#Rc-move-semantic))を残します。それは人を驚かせ、危険でもあります。なので、左辺値（後でアクセスされるかもしれません）からはムーブしないようにします。
+
+##### Notes
+
+ソースが右辺値（例えば、関数の結果を `return` するための値）の時、ムーブは暗黙的に行われます。なので、それらの場合、明示的に `move` を書いて、意味もなくコードを複雑にしないこと。その代わり、値を返す短い関数を書けば、関数が戻るところと呼び出し元が戻り値を受け取るところは自然に最適化されます。
+
+一般的には、この文書のガイドライン（例えば、変数のスコープを不要に大きくしない、値を戻す短い関数を書く、ローカル変数を戻すなど）に従えば、明示的に `std::move` を書く必要はほとんどなくなります。
+
+明示的な `move` は、オブジェクトを別のスコープに明示的に移動するために必要です。特に、それを、"sink" 関数に渡す時と、ムーブ操作（ムーブコンストラクタ、ムーブ代入演算子）自身と、swap 操作の実装の中で。
+
+##### Example, bad
+
+    void sink(X&& x);   // sink takes ownership of x
+
+    void user()
+    {
+        X x;
+        // error: cannot bind an lvalue to a rvalue reference
+        sink(x);
+        // OK: sink takes the contents of x, x must now be assumed to be empty
+        sink(std::move(x));
+
+        // ...
+
+        // probably a mistake
+        use(x);
+    }
+
+通常は、`std::move()` は、`&&` 仮引数への実引数として使われます。
+そして、その後は、そのオブジェクトは moved from ([C.64](#Rc-move-semantic) 参照)されたものと仮定し、新しい値を次に設定するまではその状態を再び読まないこと。
+
+    void f() {
+        string s1 = "supercalifragilisticexpialidocious";
+
+        string s2 = s1;             // ok, takes a copy
+        assert(s1 == "supercalifragilisticexpialidocious");  // ok
+
+        // bad, if you want to keep using s1's value
+        string s3 = move(s1);
+
+        // bad, assert will likely fail, s1 likely changed
+        assert(s1 == "supercalifragilisticexpialidocious");
+    }
+
+##### Example
+
+    void sink(unique_ptr<widget> p);  // pass ownership of p to sink()
+
+    void f() {
+        auto w = make_unique<widget>();
+        // ...
+        sink(std::move(w));               // ok, give to sink()
+        // ...
+        sink(w);    // Error: unique_ptr is carefully designed so that you cannot copy it
+    }
+
+##### Notes
+
+`std::move()` は、 `&&` へのキャストが変装したものです。それは自身では何も移動しません。ただ、指定されたオブジェクトを moved from できる候補として印を付けます。
+言語は既に、オブジェクトが moved from できる一般的な場合を知っています。特に、関数から値を返す時には。なので、冗長な `std::move()` でコードを複雑にしないこと。
+
+「より効率的」だと聞いたからという理由だけで、決して `std::move()` を書かないこと。
+一般論として、「効率的」という主張を、データなしに信じないこと(???)。
+一般論として、理由なしにあなたのコードを複雑にしないこと(??)。
+
 ##### Example, bad
 
     vector<int> make_vector() {
@@ -1431,6 +1500,21 @@ Static に確保された組み込み型のオブジェクトは、デフォル�
 
 `f` が値を戻す時、決して、`x = move(f());` のように、戻される値に対して `move` を書かないこと。
 言語は既に、戻される値が一時オブジェクトであり、moved from することができることを知っています。
+
+##### Example
+
+    void mover(X&& x) {
+        call_something(std::move(x));         // ok
+        call_something(std::forward<X>(x));   // bad, don't std::forward an rvalue reference
+        call_something(x);                    // suspicious, why not std::move?
+    }
+
+    template<class T>
+    void forwarder(T&& t) {
+        call_something(std::move(t));         // bad, don't std::move a forwarding reference
+        call_something(std::forward<T>(t));   // ok
+        call_something(t);                    // suspicious, why not std::forward?
+    }
 
 ### <a name="Res-new"></a>ES.60: 資源管理関数の外での `new` と `delete` を避けよう
 
@@ -2096,7 +2180,15 @@ C++ 実装は、例外がまれであるという前提で最適化されてい�
 * 例外の性能は予測不可能です
 
 全ての人を満足させるようにこの問題の結論を出す方法はありません。
-略
+結局、例外をめぐる議論は、４０年以上、続いています。
+ある言語は、例外なしでは使えません。例外をサポートしない言語もあります。
+この結果、例外の使用と不使用とに強い伝統と熱い議論が生まれました。
+
+しかし、汎用プログラミング言語とこのガイドラインの文脈で、なぜ例外が最善の選択肢であると私達が考えるかを、簡潔に示すことはできます。
+賛成か反対かという単純な議論はしばしば結論が出ません。
+実際に、例外が不適切である特殊化されたアプリケーションは（例えば、例外を処理するコストの信頼できる見積もりがサポートされないハードリアルタイムシステム）あります。
+
+例外への主な反対意見を順に見ていきましょう。
 
 ### <a name="Rnr-lots-of-files"></a>NR.4: ダメ：クラスの宣言はそれぞれ独自のソースファイルに置こう
 
@@ -2105,6 +2197,21 @@ C++ 実装は、例外がまれであるという前提で最適化されてい�
 ### <a name="Rnr-goto-exit"></a>NR.6: ダメ：関数の終わりに全ての後始末アクションを置いて、goto で抜けよう
 
 ### <a name="Rnr-protected-data"></a>NR.7: ダメ： 全てのデータメンバを `protected` にしよう
+
+# <a name="S-references"></a>RF: 参考文献
+
+訳註。コーディング規則、本、ウェブサイト、ビデオ、マニュアルなどが紹介されています。
+
+# <a name="S-gsl"></a>GSL: Guideline support library
+
+GSL はこのガイドラインのセットをサポートするために設計された機能を持つ、小さいライブラリです。
+これら機能なしでは、このガイドラインは言語の詳細に関して、ずっと制限的になるよりなかったでしょう。
+
+Core Guidelines サポートライブラリは `gsl` 名前空間で定義され、名前は標準ライブラリあるいは他のよく知られたライブラリで使われる名前の別名であることがあります。`gsl` 名前空間を使った（コンパイル時の）間接化を使えば、実験をしたり、サポート機能をローカルに修正したものを使うこともできます。
+
+GSL はヘッダオンリィで、 [GSL: Guideline support library](https://github.com/Microsoft/GSL) にあります。
+
+訳註。owner, span, zstring, Expects finally, joining_thread などはこのヘッダで定義されています。
 
 ### <a name="Rl-comments"></a>NL.1: コードで明確に書けることをコメントで言わないこと
 
@@ -2187,5 +2294,19 @@ C++ 実装は、例外がまれであるという前提で最適化されてい�
 
     const int *const p = nullptr;   // OK, constant pointer to constant int
     int const *const p = nullptr;   // bad, constant pointer to constant int
+
+### <a name="Faq-gsl-iso"></a>FAQ.54: GSL (guideline support library) は、 ISO C++ 標準化委員会によって認可されましたか？
+
+いいえ。GSL は、現在標準ライブラリにないいくつかの型と別名をサポートするためだけに存在します。もし委員会が標準化されたバージョン（GSL のあるいは、同じ要求を満たす他のもの）を決定したら、それらは GSL から除かれることがあるでしょう。
+
+# <a name="S-tools"></a>付録 D: サポートツール
+
+### <a name="St-clangtidy"></a>Tools: [Clang-tidy](http://clang.llvm.org/extra/clang-tidy/checks/list.html)
+
+Clang-tidy は、C++ Core Guidelines を実施するための特定の規則セットを持ちます。これら規則は、 `cppcoreguidelines-*` というパターンの名前がついています。
+
+### <a name="St-cppcorecheck"></a>Tools: [CppCoreCheck](https://docs.microsoft.com/en-us/visualstudio/code-quality/using-the-cpp-core-guidelines-checkers)
+
+マイクロソフトのコンパイラの C++ コード解析は、C++ Core Guidelines を実施するための特定の規則セットを持ちます。
 
 終わり
