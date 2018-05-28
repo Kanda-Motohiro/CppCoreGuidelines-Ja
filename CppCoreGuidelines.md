@@ -552,7 +552,7 @@ C++17 では、「構造化バインディング」を使って、複数の変�
 デストラクタを書く人は、なぜデストラクタが呼ばれたか知らないので、例外を投げて「実行を拒否する」ことはできません。
 [discussion](#Sd-dtor) を参照ください。
 問題をさらに悪くすることに、多くの、「クローズ／解放」操作はリトライ不可能です。
-もしなんとか可能なら、クローズ／解放の失敗を基本的な設計の誤りと考えて、終了しましょう。
+もしなんとか可能なら、クローズ／解放の失敗を基本的な設計の誤りと考えて、terminate しましょう。
 
 ##### 注意
 
@@ -1075,7 +1075,7 @@ Static に確保された組み込み型のオブジェクトは、デフォル�
 
 ### <a name="Ru-pun"></a>C.183: `union` を使って型変換をしないこと
 
-# <a name="S-enum"></a>Enum: Enumerations 列挙子
+# <a name="S-enum"></a>Enum: Enumerations 列挙
 
 ### <a name="Renum-macro"></a>Enum.1: マクロより列挙子を選ぼう
 
@@ -2098,7 +2098,50 @@ C++ 実装は、例外がまれであるという前提で最適化されてい�
 
 ### <a name="Rs-consistency"></a>SF.5: `.cpp` ファイルは、そのインタフェースを定義する `.h` ファイルをインクルードしなくてはいけません
 
+##### Example, bad
+
+    // foo.h:
+    void foo(int);
+    int bar(long);
+    int foobar(int);
+
+    // foo.cpp:
+    void foo(int) { /* ... */ }
+    int bar(double) { /* ... */ }
+    double foobar(int);
+
+エラーは、`bar` あるいは `foobar` を呼ぶプログラムをリンクするときまで見つかりません。
+
+##### Example
+
+    // foo.h:
+    void foo(int);
+    int bar(long);
+    int foobar(int);
+
+    // foo.cpp:
+    #include <foo.h>
+
+    void foo(int) { /* ... */ }
+    int bar(double) { /* ... */ }
+    double foobar(int);   // error: wrong return type
+
 ### <a name="Rs-using"></a>SF.6: `using namespace` 指令は、移行のため、基本的なライブラリ (`std` のような)のため、あるいは、ローカルスコープ内（その時に限り）で使おう
+
+##### Example
+
+    #include <string>
+    #include <vector>
+    #include <iostream>
+    #include <memory>
+    #include <algorithm>
+
+    using namespace std;
+
+    // ...
+
+ここでは、（明らかに）標準ライブラリがいたるところで使われ、他のライブラリは使われていないようです。
+なので、全ての場所で `std::` を要求するのは、煩わしいです。
 
 ### <a name="Rs-using-directive"></a>SF.7: ヘッダファイル内のグローバルスコープで、 `using namespace` を書かないこと
 
