@@ -1,3 +1,5 @@
+C++ Core Guidelines の日本語訳
+
 Here is a Japanese translation of (mostly only) rule titles (for now) from [C++ Core Guidelines](https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md) as of April 16, 2018 by kanda.motohiro@gmail.com. This translation is disributed under the [LICENSE](https://github.com/isocpp/CppCoreGuidelines/blob/master/LICENSE).
 The LICENSE is very restrictive but according to this [issue discussion on translation](https://github.com/isocpp/CppCoreGuidelines/issues/1065), publishing a translation is permitted.
 
@@ -225,6 +227,37 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 ### <a name="Rf-forward"></a>F.19: 「forward」パラメタは、 `TP&&` で渡して、そのパラメタには std::forward だけをしよう
 
 ### <a name="Rf-out"></a>F.20: 「出力」の出力値は、出力パラメタより、戻り値を選ぼう
+
+##### Reason
+
+戻り値はそれ自身でドキュメントになります。一方、`&` は入出力にも出力オンリィにもなり、誤って使われることがあります。
+
+これには、性能を上げ、明示的なメモリ管理を避けるために暗黙的なムーブ操作を使う、標準コンテナのような、巨大なオブジェクトも含みます。
+
+##### Example
+
+    // OK: return pointers to elements with the value x
+    vector<const int*> find_all(const vector<int>&, int x);
+
+    // Bad: place pointers to elements with value x in-out
+    void find_all(const vector<int>&, vector<const int*>& out, int x);
+
+##### Note
+
+多くの（個々にはムーブが安価な）要素を持つ  `struct` は、合計ではムーブするのが高価なことがあります。
+
+`const` 値を戻すのはおすすめしません。そういう古い忠告は今では無効です。
+それは価値を加えず、ムーブセマンティクスと干渉します。
+
+    const vector<int> fct();    // bad: that "const" is more trouble than it is worth
+
+    vector<int> g(const vector<int>& vx)
+    {
+        // ...
+        fct() = vx;   // prevented by the "const"
+        // ...
+        return fct(); // expensive copy: move semantics suppressed by the "const"
+    }
 
 ##### 例外
 
@@ -1190,6 +1223,18 @@ Static に確保された組み込み型のオブジェクトは、デフォル�
 ### <a name="Rr-uniqueptrparam"></a>R.32: `unique_ptr<widget>` 引数を取って、関数が `widget` の所有権を前提とすることを表そう
 
 ### <a name="Rr-reseat"></a>R.33: `unique_ptr<widget>&` 引数を取って、関数が `widget` を reseat することを表そう
+
+##### Note
+
+"reseat" とは、「ポインタあるいはスマートポインタが、異なるオブジェクトを参照するようにする」ことを意味します。
+
+##### Example
+
+    void reseat(unique_ptr<widget>&); // "will" or "might" reseat pointer
+
+##### Example, bad
+
+    void thinko(const unique_ptr<widget>&); // usually not what you want
 
 ### <a name="Rr-sharedptrparam-owner"></a>R.34: `shared_ptr<widget>` 引数を取って、関数が widget の所有者の一部であることを表そう
 
@@ -2190,6 +2235,11 @@ C++ 実装は、例外がまれであるという前提で最適化されてい�
 ### <a name="Rsl-arrays"></a>SL.con.1: C 配列より、 STL `array` あるいは `vector` を使おう
 
 ### <a name="Rsl-vector"></a>SL.con.2: 他のコンテナを使う理由が無い限り、デフォルトで STL `vector` を使おう
+
+##### Reason
+
+`vector` と `array` は、最高速の汎用アクセス（ベクトル化が容易でもある、ランダムアクセス）、最高速のデフォルトアクセスパターン（最初から最後あるいは、最後から最初、はプリフェッチに有利です）、そして最低の領域オーバーヘッド（連続レイアウトは、要素間のオーバーヘッドがゼロで、キャッシュに有利です）を提供する、唯一の標準コンテナです。
+普通は、コンテナに要素を加えたり除いたりする必要があるでしょうから、`vector` をデフォルトで使おう。コンテナのサイズを変える必要がなければ、`array` を使おう。
 
 ### <a name="Rsl-bounds"></a>SL.con.3: 境界エラーを避けよう
 
