@@ -193,6 +193,15 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 ### <a name="Rf-pure"></a>F.8: pure 関数を使おう
 
+##### Example
+
+    template<class T>
+    auto square(T t) { return t * t; }
+
+##### Note
+
+`constexpr` 関数は、 pure です。
+
 ### <a name="Rf-unused"></a>F.9: 使わないパラメタは、無名とするべきです
 
 ##### 例
@@ -218,15 +227,67 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 上級者向けのテクニックは、その必要性をきちんと示し、その必要性をコメントにドキュメントした後で使おう。
 
-### <a name="Rf-in"></a>F.16: 「入力」パラメタでは、安価にコピーできる型は値渡しで、そうでないものは `const` への参照で渡そう
+### <a name="Rf-in"></a>F.16: 「入力」仮引数では、安価にコピーできる型は値渡しで、そうでないものは `const` への参照で渡そう
 
-### <a name="Rf-inout"></a>F.17: 「入出力」パラメタは、`const` でない参照で渡そう
+##### Example
 
-### <a name="Rf-consume"></a>F.18: 「move-from する予定」のパラメタは、 `X&&` で渡して、そのパラメタを std::move しよう
+    void f1(const string& s);  // OK: pass by reference to const; always cheap
 
-### <a name="Rf-forward"></a>F.19: 「forward」パラメタは、 `TP&&` で渡して、そのパラメタには std::forward だけをしよう
+    void f2(string s);         // bad: potentially expensive
 
-### <a name="Rf-out"></a>F.20: 「出力」の出力値は、出力パラメタより、戻り値を選ぼう
+    void f3(int x);            // OK: Unbeatable
+
+    void f4(const int& x);     // bad: overhead on access in f4()
+
+上級者向け（限定）には、「入力オンリィ」仮引数の右辺値が渡されたときに本当に最適化が必要なら：
+
+* もしその関数が無条件にその実引数からムーブを行う予定なら、それを、
+ `&&` で取りなさい。 [F.18](#Rf-consume)を参照。
+* もしその関数が実引数のコピーを保持する予定なら、
+仮引数を `const&` で渡す（左辺値の場合）とともに、
+それを  `&&` （右辺値の場合）で渡す多重定義を加え、関数の本体で、それを
+目的地に `std::move` しなさい。要するにこれは、「move-from する予定」を
+多重定義します[F.18](#Rf-consume) を参照。
+* 複数の「入力＋コピー」のような特別な場合は、完全なフォワーディング
+を考えよう。[F.19](#Rf-forward) を参照。
+
+##### Example
+
+    int multiply(int, int); // just input ints, pass by value
+
+    // suffix is input-only but not as cheap as an int, pass by const&
+    string& concatenate(string&, const string& suffix);
+
+    void sink(unique_ptr<widget>);  // input only, and moves ownership of the widget
+
+### <a name="Rf-inout"></a>F.17: 「入出力」仮引数は、`const` でない参照で渡そう
+
+##### Example
+
+    void update(Record& r);  // assume that update writes to r
+
+### <a name="Rf-consume"></a>F.18: 「move-from する予定」の仮引数は、 `X&&` で渡して、その仮引数を std::move しよう
+
+##### Example
+
+    void sink(vector<int>&& v) {   // sink takes ownership of whatever the argument owned
+        // usually there might be const accesses of v here
+        store_somewhere(std::move(v));
+        // usually no more use of v here; it is moved-from
+    }
+
+### <a name="Rf-forward"></a>F.19: 「forward」仮引数は、 `TP&&` で渡して、その仮引数には std::forward だけをしよう
+
+##### Example
+
+    template <class F, class... Args>
+    inline auto invoke(F f, Args&&... args) {
+        return f(forward<Args>(args)...);
+    }
+
+    ??? calls ???
+
+### <a name="Rf-out"></a>F.20: 「出力」の出力値は、出力仮引数より、戻り値を選ぼう
 
 ##### Reason
 
@@ -279,6 +340,23 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
     void val(int&);       // Bad: Is val reading its argument
 
 ### <a name="Rf-out-multi"></a>F.21: 複数の「出力」値を戻すには、 tuple あるいは struct を選ぼう
+
+##### Example
+
+    // BAD: output-only parameter documented in a comment
+    int f(const string& input, /*output only*/ string& output_data)
+    {
+        // ...
+        output_data = something();
+        return status;
+    }
+
+    // GOOD: self-documenting
+    tuple<int, string> f(const string& input)
+    {
+        // ...
+        return make_tuple(status, something());
+    }
 
 C++17 では、「構造化バインディング」を使って、複数の変数を宣言して初期化することができるようになるはずです：
 
