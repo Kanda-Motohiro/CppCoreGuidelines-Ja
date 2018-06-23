@@ -1083,6 +1083,20 @@ Static に確保された組み込み型のオブジェクトは、デフォル�
 
 ### <a name="Rh-final"></a>C.139: `final` はほどほどに使おう
 
+##### Reason
+
+階層を`final` で終わりにすることが論理的に必要であることはそんなにありません。
+そしてそれは、階層の拡張可能性を損なうことがあります。
+
+##### Example, bad
+
+    class Widget { /* ... */ };
+
+    // nobody will ever want to improve My_widget (or so you thought)
+    class My_widget final : public Widget { /* ... */ };
+
+    class My_improved_widget : public My_widget { /* ... */ };  // error: can't do that
+
 ### <a name="Rh-poly"></a>C.145: 多相的なオブジェクトは、ポインタと参照を使ってアクセスしよう
 
 ##### Example
@@ -1669,6 +1683,44 @@ Static に確保された組み込み型のオブジェクトは、デフォル�
 
 ### <a name="Res-for-range"></a>ES.71: 選択の余地があるなら、`for` 文より範囲 `for` 文を選ぼう
 
+##### Example
+
+    for (gsl::index i = 0; i < v.size(); ++i)   // bad
+            cout << v[i] << '\n';
+
+    for (auto p = v.begin(); p != v.end(); ++p)   // bad
+        cout << *p << '\n';
+
+    for (auto& x : v)    // OK
+        cout << x << '\n';
+
+    for (gsl::index i = 1; i < v.size(); ++i) // touches two elements: can't be a range-for
+        cout << v[i] + v[i - 1] << '\n';
+
+    for (gsl::index i = 0; i < v.size(); ++i) // possible side effect: can't be a range-for
+        cout << f(v, &v[i]) << '\n';
+
+    for (gsl::index i = 0; i < v.size(); ++i) { // body messes with loop variable: can't be a range-for
+        if (i % 2 == 0)
+            continue;   // skip even elements
+        else
+            cout << v[i] << '\n';
+    }
+
+##### Note
+
+範囲 `for` ループで、ループ変数の高価な複写をしないこと：
+
+    for (string s : vs) // ...
+
+これは、`vs` のそれぞれの要素を `s` に複写します。この方が良い：
+
+    for (string& s : vs) // ...
+
+ループ変数が変更あるいは複写されないならば、こちらはさらに良い：
+
+    for (const string& s : vs) // ...
+
 ### <a name="Res-for-while"></a>ES.72: 明らかなループ変数がある時は、`while` 文より `for` 文を選ぼう
 
 ### <a name="Res-while-for"></a>ES.73: 明らかなループ変数がない時は、`for` 文より `while` 文を選ぼう
@@ -2059,6 +2111,20 @@ C++ 実装は、例外がまれであるという前提で最適化されてい�
 ### <a name="Re-no-throw"></a>E.28: グローバル状態（例えば `errno`）を基本とするエラー処理を避けよう
 
 ### <a name="Re-specifications"></a>E.30: exception specification は使わないこと
+
+##### Reason
+
+Exception specification は、エラー処理を不安定にし、実行時コストを課します。それは、C++ 標準から除かれました。
+
+##### Example
+
+    int use(int arg)
+        throw(X, Y)
+    {
+        // ...
+        auto x = f(arg);
+        // ...
+    }
 
 ### <a name="Re_catch"></a>E.31: `catch` 節は正しい順序にしよう
 
@@ -2482,6 +2548,11 @@ GSL はヘッダオンリィで、 [GSL: Guideline support library](https://gith
 
 ### <a name="Rl-stmt"></a>NL.20: 同じ行に２つの文を置かないこと
 
+##### Example
+
+    int x = 7; char* p = 29;    // don't
+    int x = 7; f(x);  ++x;      // don't
+
 ### <a name="Rl-dcl"></a>NL.21: 一つの宣言には、一つの名前（だけ）を宣言しよう
 
 ### <a name="Rl-void"></a>NL.25: `void` は引数型に使わないこと
@@ -2503,6 +2574,11 @@ GSL はヘッダオンリィで、 [GSL: Guideline support library](https://gith
     int const *const p = nullptr;   // bad, constant pointer to constant int
 
 # <a name="S-faq"></a>FAQ: しばしば問われる質問の答え
+
+### <a name="Faq-aims"></a>FAQ.1:これらのガイドラインは何を達成しようとしているのですか？
+
+このページの最初を見てください。これは、現在の C++ 標準（これを書いている時は、 C++14 です）を使って、C++ コードを書くための、現代的で権威あるガイドラインを維持するためのオープンソースプロジェクトです。
+このガイドラインは、現代的で、可能な限りマシンによる強制が可能で、いろいろな組織が自分自身の企業コーディング規則に取り入れるのが容易なように、貢献とフォークに開かれているように設計されました。
 
 ### <a name="Faq-boost"></a>FAQ.53: なぜ、 GSL の型は Boost を通して提案されなかったのですか？
 

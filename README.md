@@ -12,14 +12,34 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 [Boost.勉強会#19東京 Effective Modern C++とC++ Core Guidelines](https://www.slideshare.net/ShintarouOkada/boost19-effective-modern-cc-core-guidelines)
 
-おまけ
+## おまけ
 
-先生は言われた。
+### NR.X: ダメ：全ての例外は発生する最も近くで捕捉しよう
+
+##### Example, bad
+
+    try {
+        std::string s{"Hello, World\n"};
+        //std::string S(1024*1024*1024, 'a');
+    } catch (const std::bad_alloc& e) {
+        fprintf(stderr, "failed to allocate string. %s. C is exception free!\n", e.what());
+        exit(1);
+    }
+
+main で例外を捉えました。どこで何が起きたかは、わかりません、というのも困るけどね。やっぱり、C++ にも、バックトレースほしいよね。
+
+### 先生は言われた。
 
 * 劣った人はただ規則に従う。
 * ほどほどの人は、規則の意味を考えて取捨選択し、必要な時は新しい規則を作る。
 * 優れた人は、その挙動の全てが、 best practice になる。
 
 // 論語のもじりなのだが、主張は道家みたいになった。
+
+### もうひとつ、あとがき
+
+C++ は進化し続けています。古い言語仕様、ライブラリ、実装にもとづいたアドバイスの多くは今では有害です。
+
+このガイドラインも例外ではありません。これは、二つの不確定要素を含みます。コンセプトと GSL です。いずれも、C++17 には含まれません。あなたのプロジェクトで、それら二つに依存する規則を採用した場合、例えば、五年後にどうなるかは不明です。
 
 以上
