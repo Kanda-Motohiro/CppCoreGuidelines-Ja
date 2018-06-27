@@ -5,6 +5,16 @@ The LICENSE is very restrictive but according to this [issue discussion on trans
 
 以下は、C++ Core Guidelines （のほぼ規則のタイトルだけ）を訳したものです。ライセンスファイルによれば、訳をこのように公開することは不可能なのですが、引用したイシューでは、許可されているようです。私が興味のある部分だけを訳しています。
 
+# <a name="main"></a>C++ Core Guidelines
+
+April 16, 2018
+
+
+編集者:
+
+* [Bjarne Stroustrup](http://www.stroustrup.com)
+* [Herb Sutter](http://herbsutter.com/)
+
 # <a name="S-philosophy"></a>P: Philosophy 哲学
 
 ### <a name="Rp-direct"></a>P.1: アイディアは直接コードで表現しよう
@@ -2106,6 +2116,27 @@ C++ 実装は、例外がまれであるという前提で最適化されてい�
 
 ### <a name="Re-no-throw-crash"></a>E.26: 例外を投げられない時は、速やかに失敗することを考慮しよう
 
+##### Example
+
+    void f(int n)
+    {
+        // ...
+        p = static_cast<X*>(malloc(n, X));
+        if (!p) abort();     // abort if memory is exhausted
+        // ...
+    }
+
+ほとんどのプログラムは、いずれにしても、メモリ枯渇に優雅に対処することはできません。これはほぼ、以下と同じです。
+
+    void f(int n)
+    {
+        // ...
+        p = new X[n];    // throw if memory is exhausted (by default, terminate)
+        // ...
+    }
+
+典型的には、終了する前に、「クラッシュ」の理由をログするのは良い考えです。
+
 ### <a name="Re-no-throw-codes"></a>E.27: 例外を投げられない時は、エラーコードをシステマチックに使おう
 
 ### <a name="Re-no-throw"></a>E.28: グローバル状態（例えば `errno`）を基本とするエラー処理を避けよう
@@ -2461,6 +2492,29 @@ Exception specification は、エラー処理を不安定にし、実行時コ�
 
 例外への主な反対意見を順に見ていきましょう。
 
+* 例外は非効率的です
+何に比べてでしょう？
+XXX
+* 例外はリークと誤りにつながります
+そんなことはありません。
+XXX
+
+* 例外の性能は予測不可能です
+XXX
+
+例外の使用を良しとする基本的な意見は以下です。
+
+* 例外は、エラーリターンと正常リターンを明確に区別します。
+* 例外は忘れたり無視したりできません。
+* 例外はシステマチックに使うことができます。
+
+ご注意
+
+* 例外は、エラーを報告するためのものです（C++ では。他の言語は他の例外の使い方をするかもしれません）。
+* 例外は、ローカルに処理できるエラーのためのものではありません。
+* 全ての関数で全ての例外を捕捉しようとしないこと（それは面倒で、不格好で、遅いコードにつながります）。
+* 例外は、回復不可能なエラーの後、モジュール／システムを即座に終了する必要のあるエラーのためのものではありません。
+
 ### <a name="Rnr-lots-of-files"></a>NR.4: ダメ：クラスの宣言はそれぞれ独自のソースファイルに置こう
 
 ### <a name="Rnr-two-phase-init"></a>NR.5: ダメ：コンストラクタでたくさんの作業をしないこと；その代わり、２相の初期化を使おう
@@ -2498,11 +2552,33 @@ GSL はヘッダオンリィで、 [GSL: Guideline support library](https://gith
 
 ### <a name="Rl-name-length"></a>NL.7: 名前の長さは、ほぼ、そのスコープの長さと比例させよう
 
+** 原理 **: スコープが大きくなれば、混乱や意図しない名前の衝突の機会が増します。
+
+##### Example
+
+    double sqrt(double x);   // return the square root of x; x must be non-negative
+
+    int length(const char* p);  // return the number of characters in a zero-terminated C-style string
+
+    int length_of_string(const char zero_terminated_array_of_char[])    // bad: verbose
+
+    int g;      // bad: global variable with a cryptic name
+
+    int open;   // bad: global variable with a short, popular name
+
+ポインタを `p` としたり、浮動小数点変数を `x`  とするのは、慣用的であり、限られたスコープならわかりにくくはありません。
+
 ### <a name="Rl-name"></a>NL.8: 一貫した名前付けスタイルを使おう
 
 ### <a name="Rl-all-caps"></a>NL.9: `ALL_CAPS`、全部大文字、はマクロ名にだけ使おう
 
 ### <a name="Rl-camel"></a>NL.10: `underscore_style` の名前を選ぼう
+
+##### 注意
+
+この規則は、あなたが選択肢を持つときのデフォルトとしてだけ、使おう。
+しばしば、あなたは選択肢がなく、[一貫性](#Rl-name) のために、確立されたスタイルに従うしかありません。個人的好みよりも、一貫性が重要です。
+
 
 ### <a name="Rl-space"></a>NL.15: 空白はほどほどに使おう
 
